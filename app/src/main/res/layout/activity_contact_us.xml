@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ContactUs"
+    android:background="@color/light_grey"
+    >
+
+    <ImageButton
+        android:id="@+id/ContactUs_back"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/image_arrow_back"
+        android:background="@color/transparent"
+        android:layout_margin="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        app:tint="@color/whale_blue"
+        android:contentDescription="Back Button"
+        />
+
+
+    <TextView
+        android:id="@+id/ContactUs_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ContactUs_back"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="17dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="30dp"
+        android:fontFamily="@font/teachers"
+        android:paddingHorizontal="35dp"
+        android:text="Contact Us"
+        android:textAlignment="center"
+        android:textColor="@color/whale_blue"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+
+
+    <EditText
+        android:maxHeight="300dp"
+        android:id="@+id/ContactUs_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ContactUs_title"
+        android:background="@drawable/input_section_bg"
+        android:fontFamily="@font/teachers"
+        android:gravity="top"
+        android:layout_marginVertical="10dp"
+        android:hint="How Can we help you?"
+        android:padding="20dp"
+        android:textAlignment="gravity"
+        android:textColor="@color/whale_blue"
+        android:textColorHint="#CC303349"
+        android:layout_marginHorizontal="40dp"
+        android:textSize="17sp" />
+
+    <ImageButton
+        android:id="@+id/ContactUs_send"
+        android:layout_width="70dp"
+        android:layout_height="60dp"
+        android:layout_below="@id/ContactUs_message"
+        android:layout_alignParentRight="true"
+        android:textStyle="bold"
+        android:textColor="@color/whale_blue"
+        android:background="@color/transparent"
+        android:src="@drawable/image_sendbutton"
+        android:layout_marginHorizontal="40dp"
+        app:tint="@color/whale_blue"
+        android:contentDescription="Send Button"
+        />
+
+
+
+    <TextView
+        android:id="@+id/ContactUs_footer"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:background="@drawable/round_shape_background"
+        android:fontFamily="@font/teachers"
+        android:gravity="center_vertical"
+        android:text="PlanPal"
+        android:textAlignment="center"
+        android:textColor="#CCECE9E9"
+        android:textSize="25sp"
+        tools:ignore="RtlCompat" />
+
+
+</RelativeLayout>
+

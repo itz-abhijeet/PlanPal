@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
+    <color name="blue_logo">#0051bd</color>
+    <color name="bg_white">#ECE9E9</color>
+    <color name="orange">#E74E20</color>
+    <color name="light_grey">#f8f4fc</color>
+    <color name="whale_blue">#303349</color>
+
+<!--    #-->
+</resources>
+
+
+<!--    f8f4fc
+
+F0F0F0
+
+-->

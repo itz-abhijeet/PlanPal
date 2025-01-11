@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_white"
+    tools:context=".AddTeacher">
+
+    <View
+        android:id="@+id/addTeacher_bg"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:background="@drawable/top_background"
+        />
+
+
+    <TextView
+        android:id="@+id/addTeacher_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Teacher"
+        android:textStyle="bold"
+        android:paddingHorizontal="35dp"
+        android:fontFamily="@font/teachers"
+        android:textColor="@color/white"
+        android:textSize="38sp"
+        android:layout_marginTop="80dp" />
+
+    <TextView
+        android:id="@+id/addTeacher_titledes"
+        android:layout_below="@id/addTeacher_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="PlanPal is and applicaion that allows you to generate college timetable."
+        android:paddingHorizontal="35dp"
+        android:fontFamily="@font/teachers"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:layout_marginTop="15dp"
+        />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/addTeacher_InputSectionCard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/addTeacher_titledes"
+        android:layout_marginTop="30dp"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginBottom="30dp"
+        android:backgroundTint="@color/white"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="8dp">
+
+        <LinearLayout
+            android:id="@+id/addTeacher_InputSection"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="50dp">
+
+            <TextView
+                android:id="@+id/addTeacher_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/textbox_background"
+                android:drawableTint="#FFFFFF"
+                android:hint="ID"
+                android:padding="15dp"
+                android:text=""
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="17sp"
+                android:fontFamily="@font/teachers"
+                />
+
+            <EditText
+                android:id="@+id/addTeacher_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/textbox_background"
+                android:drawableTint="#FFFFFF"
+                android:hint="Teacher's Name"
+                android:padding="15dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="17sp"
+                android:inputType="textPersonName"
+                android:fontFamily="@font/teachers"
+                />
+
+            <EditText
+                android:id="@+id/addTeacher_sub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/textbox_background"
+                android:drawableTint="#FFFFFF"
+                android:hint="Teacher's Subject"
+                android:padding="15dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="17sp"
+                android:inputType="textPersonName"
+                android:fontFamily="@font/teachers"
+                />
+
+            <Button
+                android:id="@+id/addTeacher_Add"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="13dp"
+                android:backgroundTint="@color/whale_blue"
+                android:text="ADD TEACHER"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:layout_marginTop="15dp"
+                android:fontFamily="@font/teachers"
+                android:textColor="@color/white"
+                />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <View
+        android:id="@+id/addTeacher_foot"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@color/orange"
+        android:layout_alignParentBottom="true"
+        />
+
+</RelativeLayout>

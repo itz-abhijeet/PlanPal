@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CustomSpinnerText">
+        <item name="android:textColor">@color/orange</item>
+        <item name="android:textSize">17sp</item> <!-- Adjust size if needed -->
+    </style>
+</resources>
