@@ -20,6 +20,33 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PlanPal">
         <activity
+            android:name=".RemoveSubjectClassroom"
+            android:exported="false" />
+        <activity
+            android:name=".AddSubjectClassroom"
+            android:exported="false" />
+        <activity
+            android:name=".SubjectClassroom"
+            android:exported="false" />
+        <activity
+            android:name=".RemoveTeacherSubject"
+            android:exported="false" />
+        <activity
+            android:name=".AddTeacherSubject"
+            android:exported="false" />
+        <activity
+            android:name=".TeacherSubject"
+            android:exported="false" />
+        <activity
+            android:name=".RemoveSubject"
+            android:exported="false" />
+        <activity
+            android:name=".AddSubject"
+            android:exported="false" />
+        <activity
+            android:name=".Subject"
+            android:exported="false" />
+        <activity
             android:name=".RemoveTeacher"
             android:exported="false" />
         <activity

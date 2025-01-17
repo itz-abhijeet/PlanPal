@@ -28,31 +28,59 @@ public class HomeActivity extends AppCompatActivity {
 
         home_Classroom = findViewById(R.id.Home_Classroom);
         home_Teacher = findViewById(R.id.Home_Teacher);
+        home_subject = findViewById(R.id.Home_subject);
+        home_teacherSubject = findViewById(R.id.Home_teacherSubject);
+        home_subjectClassroom = findViewById(R.id.Home_subjectClassroom);
         home_generateTimetable = findViewById(R.id.Home_generateTimetable);
         home_dashboard = findViewById(R.id.Home_dashboard);
         home_support = findViewById(R.id.Home_support);
 
-        home_generateTimetable.setOnClickListener(new View.OnClickListener() {
+
+        home_Classroom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent_generateTimetable = new Intent(HomeActivity.this, GenerateTimetable.class);
-                startActivity(intent_generateTimetable);
+                Intent intent_Classroom = new Intent(HomeActivity.this, Classroom.class);
+                startActivity(intent_Classroom);
             }
         });
 
         home_Teacher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent_addTeacher = new Intent(HomeActivity.this, Teacher.class);
-                startActivity(intent_addTeacher);
+                Intent intent_Teacher = new Intent(HomeActivity.this, Teacher.class);
+                startActivity(intent_Teacher);
             }
         });
 
-        home_Classroom.setOnClickListener(new View.OnClickListener() {
+        home_subject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent_addClassroom = new Intent(HomeActivity.this, Classroom.class);
-                startActivity(intent_addClassroom);
+                Intent intent_subject = new Intent(HomeActivity.this, Subject.class);
+                startActivity(intent_subject);
+            }
+        });
+
+        home_teacherSubject.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent_teacherSubject = new Intent(HomeActivity.this, TeacherSubject.class);
+                startActivity(intent_teacherSubject);
+            }
+        });
+
+        home_subjectClassroom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent_subjectClassroom = new Intent(HomeActivity.this, SubjectClassroom.class);
+                startActivity(intent_subjectClassroom);
+            }
+        });
+
+        home_generateTimetable.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent_generateTimetable = new Intent(HomeActivity.this, GenerateTimetable.class);
+                startActivity(intent_generateTimetable);
             }
         });
 

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_white"
-    tools:context=".AddClassroom">
+    tools:context=".AddSubjectClassroom">
 
     <View
         android:id="@+id/addClassroom_bg"
@@ -17,10 +17,10 @@
 
 
     <TextView
-        android:id="@+id/addClassroom_title"
+        android:id="@+id/addsubjectClassroom_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Classroom"
+        android:text="Add Subject - Classroom"
         android:textStyle="bold"
         android:paddingHorizontal="35dp"
         android:fontFamily="@font/teachers"
@@ -29,8 +29,8 @@
         android:layout_marginTop="80dp" />
 
     <TextView
-        android:id="@+id/addClassroom_titledes"
-        android:layout_below="@id/addClassroom_title"
+        android:id="@+id/addsubjectClassroom_titledes"
+        android:layout_below="@id/addsubjectClassroom_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="PlanPal is and applicaion that allows you to generate college timetable."
@@ -42,10 +42,10 @@
         />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/addClassroom_InputSectionCard"
+        android:id="@+id/addsubjectClassroom_InputSectionCard"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/addClassroom_titledes"
+        android:layout_below="@id/addsubjectClassroom_titledes"
         android:layout_marginTop="30dp"
         android:layout_marginHorizontal="30dp"
         android:layout_marginBottom="30dp"
@@ -55,7 +55,7 @@
         >
 
         <LinearLayout
-            android:id="@+id/addClassroom_InputSection"
+            android:id="@+id/addsubjectClassroom_InputSection"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -63,7 +63,7 @@
             android:paddingTop="50dp">
 
             <EditText
-                android:id="@+id/addClassroom_no"
+                android:id="@+id/addsubjectClassroom_no"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
@@ -90,12 +90,12 @@
                 />
 
             <EditText
-                android:id="@+id/addClassroom_capacity"
+                android:id="@+id/addsubjectClassroom_subjectCode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/textbox_background"
-                android:hint="Capacity"
+                android:hint="Subject Code"
                 android:padding="15dp"
                 android:text=""
                 android:textColor="@color/black"
@@ -103,65 +103,14 @@
                 android:textSize="17sp"
                 android:fontFamily="@font/teachers"
                 />
-
-            <EditText
-                android:id="@+id/addClassroom_courseCode"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/textbox_background"
-                android:hint="Course code"
-                android:padding="15dp"
-                android:text=""
-                android:textColor="@color/black"
-                android:textColorHint="@color/black"
-                android:textSize="17sp"
-                android:fontFamily="@font/teachers"
-                />
-
-            <RadioGroup
-                android:id="@+id/addClassroom_radioGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="15dp"
-                android:layout_gravity="center"
-                android:buttonTint="@color/orange"
-                android:foregroundTint="@color/orange"
-                >
-
-                <RadioButton
-                    android:id="@+id/addClassroom_radioClass"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Class"
-                    android:paddingRight="30dp"
-                    android:textColor="@color/black"
-                    android:textSize="17sp"
-                    android:fontFamily="@font/teachers"
-                    app:buttonTint="@color/whale_blue"
-                    />
-
-                <RadioButton
-                    android:id="@+id/addClassroom_radioLab"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Lab"
-                    android:paddingRight="30dp"
-                    android:textColor="@color/black"
-                    android:textSize="17sp"
-                    android:fontFamily="@font/teachers"
-                    app:buttonTint="@color/whale_blue"
-                    />
-            </RadioGroup>
 
             <Button
-                android:id="@+id/addClassroom_Add"
+                android:id="@+id/addsubjectClassroom_Add"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="13dp"
                 android:backgroundTint="@color/whale_blue"
-                android:text="ADD CLASSROOM"
+                android:text="ADD SUBJECT - CLASSROOM"
                 android:textStyle="bold"
                 android:textSize="17sp"
                 android:layout_marginTop="15dp"
@@ -173,7 +122,7 @@
     </androidx.cardview.widget.CardView>
 
     <View
-        android:id="@+id/addClassroom_foot"
+        android:id="@+id/addsubjectClassroom_foot"
         android:layout_width="match_parent"
         android:layout_height="3dp"
         android:background="@color/whale_blue"

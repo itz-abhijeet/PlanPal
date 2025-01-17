@@ -5,11 +5,11 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Teacher"
+    tools:context=".Subject"
     android:background="@color/light_grey">
 
     <TextView
-        android:id="@+id/Teacher_title"
+        android:id="@+id/Subject_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -18,7 +18,7 @@
         android:layout_marginBottom="30dp"
         android:fontFamily="@font/teachers"
         android:paddingHorizontal="35dp"
-        android:text="Teacher"
+        android:text="Subject"
         android:textAlignment="center"
         android:textColor="@color/whale_blue"
         android:textSize="30sp"
@@ -30,15 +30,14 @@
         android:orientation="vertical"
         android:layout_marginTop="30dp"
         android:layout_marginHorizontal="30dp"
-        android:layout_below="@id/Teacher_title"
+        android:layout_below="@id/Subject_title"
         >
 
-
         <Button
-            android:id="@+id/Teacher_AddTeacher"
+            android:id="@+id/Subject_AddSubject"
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:text="Add Teacher"
+            android:text="Add Subject"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:fontFamily="@font/teachers"
@@ -46,10 +45,10 @@
             />
 
         <Button
-            android:id="@+id/Teacher_RemoveTeacher"
+            android:id="@+id/Subject_RemoveSubject"
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:text="Remove Teacher"
+            android:text="Remove Subject"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:fontFamily="@font/teachers"
@@ -57,10 +56,10 @@
             />
 
         <Button
-            android:id="@+id/Teacher_ViewTeacher"
+            android:id="@+id/Subject_ViewSubject"
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:text="View Teacher"
+            android:text="View Subject"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:fontFamily="@font/teachers"

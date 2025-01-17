@@ -44,11 +44,23 @@
             android:fontFamily="@font/teachers"
             android:backgroundTint="@color/white"
             />
+
         <Button
             android:id="@+id/Classroom_RemoveClassroom"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:text="Remove Classroom"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:fontFamily="@font/teachers"
+            android:backgroundTint="@color/white"
+            />
+
+        <Button
+            android:id="@+id/Classroom_ViewClassroom"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:text="View Classroom"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:fontFamily="@font/teachers"
