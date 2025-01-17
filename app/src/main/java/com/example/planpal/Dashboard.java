@@ -16,9 +16,9 @@ import androidx.core.view.WindowInsetsCompat;
 public class Dashboard extends AppCompatActivity {
 
     ImageButton Dashboard_back;
-    Button Dashboard_ContactUs;
+    Button Dashboard_RemoveTeacher, Dashboard_ContactUs;
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint({"MissingInflatedId", "WrongViewCast"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +27,7 @@ public class Dashboard extends AppCompatActivity {
 
         Dashboard_back = findViewById(R.id.Dashboard_back);
         Dashboard_ContactUs = findViewById(R.id.Dashboard_ContactUs);
+        Dashboard_RemoveTeacher = findViewById(R.id.Dashboard_RemoveTeacher);
 
         Dashboard_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -35,6 +36,14 @@ public class Dashboard extends AppCompatActivity {
                 startActivity(intent_homepage);
             }
         });
+
+//        Dashboard_RemoveTeacher.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent_homepage = new Intent(Dashboard.this, TeacherListActivity.class);
+//                startActivity(intent_homepage);
+//            }
+//        });
 
         Dashboard_ContactUs.setOnClickListener(new View.OnClickListener() {
             @Override

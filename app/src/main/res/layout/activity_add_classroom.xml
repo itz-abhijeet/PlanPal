@@ -109,7 +109,7 @@
                     android:textColor="@color/black"
                     android:textSize="17sp"
                     android:fontFamily="@font/teachers"
-                    app:buttonTint="@color/orange"
+                    app:buttonTint="@color/whale_blue"
                     />
 
                 <RadioButton
@@ -121,7 +121,7 @@
                     android:textColor="@color/black"
                     android:textSize="17sp"
                     android:fontFamily="@font/teachers"
-                    app:buttonTint="@color/orange"
+                    app:buttonTint="@color/whale_blue"
                     />
             </RadioGroup>
 
@@ -130,7 +130,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="13dp"
-                android:backgroundTint="@color/orange"
+                android:backgroundTint="@color/whale_blue"
                 android:text="ADD CLASSROOM"
                 android:textStyle="bold"
                 android:textSize="17sp"

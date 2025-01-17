@@ -15,7 +15,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class HomeActivity extends AppCompatActivity {
 
-    LinearLayout home_generateTimetable, home_addTeacher, home_addClassroom, home_dashboard;
+    LinearLayout home_generateTimetable, home_Teacher, home_Classroom, home_dashboard;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -26,8 +26,8 @@ public class HomeActivity extends AppCompatActivity {
 
         // Initialize views
         home_generateTimetable = findViewById(R.id.Home_generateTimetable);
-        home_addTeacher = findViewById(R.id.Home_addTeacher);
-        home_addClassroom = findViewById(R.id.Home_addClassroom);
+        home_Teacher = findViewById(R.id.Home_Teacher);
+        home_Classroom = findViewById(R.id.Home_Classroom);
         home_dashboard = findViewById(R.id.Home_dashboard);
 
         home_generateTimetable.setOnClickListener(new View.OnClickListener() {
@@ -38,18 +38,18 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        home_addTeacher.setOnClickListener(new View.OnClickListener() {
+        home_Teacher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent_addTeacher = new Intent(HomeActivity.this, AddTeacher.class);
+                Intent intent_addTeacher = new Intent(HomeActivity.this, Teacher.class);
                 startActivity(intent_addTeacher);
             }
         });
 
-        home_addClassroom.setOnClickListener(new View.OnClickListener() {
+        home_Classroom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent_addClassroom = new Intent(HomeActivity.this, AddClassroom.class);
+                Intent intent_addClassroom = new Intent(HomeActivity.this, Classroom.class);
                 startActivity(intent_addClassroom);
             }
         });

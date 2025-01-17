@@ -14,12 +14,12 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class AddTeacher extends AppCompatActivity {
 
-    TextView teacherName, teacherSubject;
+    TextView teacherName, teacherEmail;
     Button addTeacher;
     DatabaseHelper databaseHelper;
 
     final String[] teacherNameStorage = {""};
-    final String[] teacherSubStorage = {""};
+    final String[] teacherEmailStorage = {""};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +29,7 @@ public class AddTeacher extends AppCompatActivity {
 
         databaseHelper = new DatabaseHelper(this);
         teacherName = findViewById(R.id.addTeacher_name);
-        teacherSubject = findViewById(R.id.addTeacher_sub);
+        teacherEmail = findViewById(R.id.addTeacher_email);
         addTeacher = findViewById(R.id.addTeacher_Add);
 
         addTeacher.setOnClickListener(new View.OnClickListener() {
@@ -37,9 +37,9 @@ public class AddTeacher extends AppCompatActivity {
             public void onClick(View v) {
 
                 teacherNameStorage[0] = teacherName.getText().toString();
-                teacherSubStorage[0] = teacherSubject.getText().toString();
+                teacherEmailStorage[0] = teacherEmail.getText().toString();
 
-                if(teacherNameStorage[0].isEmpty() || teacherSubStorage[0].isEmpty()){
+                if(teacherNameStorage[0].isEmpty() || teacherEmailStorage[0].isEmpty()){
                     Toast.makeText(AddTeacher.this, "Fill the fields properly", Toast.LENGTH_SHORT).show();
                 }
 

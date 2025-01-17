@@ -61,21 +61,7 @@
             android:paddingHorizontal="20dp"
             android:paddingTop="50dp">
 
-            <TextView
-                android:id="@+id/addTeacher_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/textbox_background"
-                android:drawableTint="#FFFFFF"
-                android:hint="ID"
-                android:padding="15dp"
-                android:text=""
-                android:textColor="@color/black"
-                android:textColorHint="@color/black"
-                android:textSize="17sp"
-                android:fontFamily="@font/teachers"
-                />
+
 
             <EditText
                 android:id="@+id/addTeacher_name"
@@ -94,20 +80,21 @@
                 />
 
             <EditText
-                android:id="@+id/addTeacher_sub"
+                android:id="@+id/addTeacher_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/textbox_background"
                 android:drawableTint="#FFFFFF"
-                android:hint="Teacher's Subject"
+                android:hint="Teacher's Email ID"
                 android:padding="15dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
                 android:textSize="17sp"
-                android:inputType="textPersonName"
+                android:inputType="textEmailAddress"
                 android:fontFamily="@font/teachers"
                 />
+
 
             <Button
                 android:id="@+id/addTeacher_Add"
@@ -130,7 +117,7 @@
         android:id="@+id/addTeacher_foot"
         android:layout_width="match_parent"
         android:layout_height="3dp"
-        android:background="@color/orange"
+        android:background="@color/whale_blue"
         android:layout_alignParentBottom="true"
         />
 

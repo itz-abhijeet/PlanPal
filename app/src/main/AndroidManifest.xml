@@ -3,10 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />
-    <uses-permission android:name="android.permission.SEND_SMS"/>
+
+    <uses-permission android:name="android.permission.SEND_SMS" />
 
     <application
         android:allowBackup="true"
@@ -17,6 +19,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PlanPal">
+        <activity
+            android:name=".RemoveTeacher"
+            android:exported="false" />
+        <activity
+            android:name=".Teacher"
+            android:exported="false" />
+        <activity
+            android:name=".RemoveClassroom"
+            android:exported="false" />
+        <activity
+            android:name=".Classroom"
+            android:exported="false" />
+        <activity
+            android:name=".TeacherListActivity"
+            android:exported="false" />
         <activity
             android:name=".ContactUs"
             android:exported="false" />

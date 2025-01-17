@@ -97,6 +97,7 @@
                 />
 
             <Button
+                android:id="@+id/Dashboard_RemoveTeacher"
                 android:layout_width="match_parent"
                 android:layout_height="75dp"
                 android:text="Remove Teacher"
