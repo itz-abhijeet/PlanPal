@@ -5,234 +5,267 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
+    private static final String DATABASE_NAME = "college.db";
+    private static final int DATABASE_VERSION = 2; // Incremented version for changes
 
+    // Table names
+    private static final String TABLE_TEACHER = "TeacherDB";
+    private static final String TABLE_CLASSROOM = "ClassroomDB";
+    private static final String TABLE_SUBJECT = "SubjectDB";
+    private static final String TABLE_TEACHER_SUBJECT = "TeacherSubjectDB";
+    private static final String TABLE_SUBJECT_CLASSROOM = "SubjectClassroomDB";
 
-    private final Context context;
+    // Columns for TeacherDB
+    private static final String TEACHER_EMAIL = "email";
+    private static final String TEACHER_NAME = "name";
 
-    // Database Name and Version
-    private static final String DATABASE_NAME = "college_database.db";
-    private static final int DATABASE_VERSION = 1;
+    // Columns for ClassroomDB
+    private static final String CLASSROOM_ROOM = "room_number";
+    private static final String CLASSROOM_YEAR = "year";
+    private static final String CLASSROOM_CAPACITY = "capacity";
+    private static final String CLASSROOM_COURSE = "course_code";
+    private static final String CLASSROOM_TYPE = "type";
 
-    // Table Names
-    public static final String TABLE_TEACHER = "Teacher";
-    public static final String TABLE_CLASSROOM = "Classroom";
-    public static final String TABLE_PDF_STORAGE = "PdfStorage";
+    // Columns for SubjectDB
+    private static final String SUBJECT_CODE = "code";
+    private static final String SUBJECT_NAME = "subject";
+    private static final String SUBJECT_CREDITS = "credits";
 
-    // Teacher Table Columns
-    public static final String COLUMN_TEACHER_ID = "TeacherID";
-    public static final String COLUMN_TEACHER_NAME = "TeacherName";
-    public static final String COLUMN_TEACHER_SUBJECT = "TeacherSubject";
+    // Columns for TeacherSubjectDB
+    private static final String TSD_TEACHER_EMAIL = "teacher_email";
+    private static final String TSD_SUBJECT_CODE = "subject_code";
 
-    // Classroom Table Columns
-    public static final String COLUMN_CLASSROOM_NAME = "ClassroomName";
-    public static final String COLUMN_CLASSROOM_YEAR = "ClassroomYear";
-    public static final String COLUMN_CLASSROOM_TYPE = "ClassroomType";
-
-    // PdfStorage Table Columns
-    public static final String COLUMN_TIMETABLE_PDF = "TimetablePdf";
-    public static final String COLUMN_TEACHER_ALLOCATION_PDF = "TeacherAllocationPdf";
-
-    // Create Teacher Table
-    private static final String CREATE_TABLE_TEACHER = "CREATE TABLE " + TABLE_TEACHER + "("
-            + COLUMN_TEACHER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + COLUMN_TEACHER_NAME + " TEXT, "
-            + COLUMN_TEACHER_SUBJECT + " TEXT)";
-
-    // Create Classroom Table
-    private static final String CREATE_TABLE_CLASSROOM = "CREATE TABLE " + TABLE_CLASSROOM + "("
-            + COLUMN_CLASSROOM_NAME + " TEXT PRIMARY KEY, "
-            + COLUMN_CLASSROOM_YEAR + " TEXT, "
-            + COLUMN_CLASSROOM_TYPE + " TEXT)";
-
-    // Create PdfStorage Table
-    private static final String CREATE_TABLE_PDF_STORAGE = "CREATE TABLE " + TABLE_PDF_STORAGE + "("
-            + COLUMN_TIMETABLE_PDF + " BLOB, "
-            + COLUMN_TEACHER_ALLOCATION_PDF + " BLOB)";
-
+    // Columns for SubjectClassroomDB
+    private static final String SCD_ROOM_NO = "room_number";
+    private static final String SCD_YEAR = "year";
+    private static final String SCD_SUBJECT_CODE = "subject_code";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this.context = context; // Store the context for later use
     }
-
-
-
-    // ---------- METHODS OF DATABASE ----------
-
-
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Create tables
-        db.execSQL(CREATE_TABLE_TEACHER);
-        db.execSQL(CREATE_TABLE_CLASSROOM);
-        db.execSQL(CREATE_TABLE_PDF_STORAGE);
+        // Create TeacherDB table
+        db.execSQL("CREATE TABLE " + TABLE_TEACHER + " (" +
+                TEACHER_EMAIL + " TEXT PRIMARY KEY, " +
+                TEACHER_NAME + " TEXT NOT NULL)");
+
+        // Create ClassroomDB table
+        db.execSQL("CREATE TABLE " + TABLE_CLASSROOM + " (" +
+                CLASSROOM_ROOM + " TEXT NOT NULL, " +
+                CLASSROOM_YEAR + " TEXT NOT NULL, " +
+                CLASSROOM_CAPACITY + " INTEGER NOT NULL, " +
+                CLASSROOM_COURSE + " TEXT NOT NULL, " +
+                CLASSROOM_TYPE + " TEXT NOT NULL, " +
+                "UNIQUE(" + CLASSROOM_ROOM + ", " + CLASSROOM_YEAR + ", " +
+                CLASSROOM_COURSE + ", " + CLASSROOM_TYPE + "))");
+
+        // Create SubjectDB table
+        db.execSQL("CREATE TABLE " + TABLE_SUBJECT + " (" +
+                SUBJECT_CODE + " TEXT UNIQUE NOT NULL, " +
+                SUBJECT_NAME + " TEXT NOT NULL, " +
+                SUBJECT_CREDITS + " INTEGER NOT NULL)");
+
+        // Create TeacherSubjectDB table
+        db.execSQL("CREATE TABLE " + TABLE_TEACHER_SUBJECT + " (" +
+                TSD_TEACHER_EMAIL + " TEXT NOT NULL, " +
+                TSD_SUBJECT_CODE + " TEXT NOT NULL, " +
+                "PRIMARY KEY (" + TSD_TEACHER_EMAIL + ", " + TSD_SUBJECT_CODE + "), " +
+                "FOREIGN KEY(" + TSD_TEACHER_EMAIL + ") REFERENCES " + TABLE_TEACHER + "(" + TEACHER_EMAIL + "), " +
+                "FOREIGN KEY(" + TSD_SUBJECT_CODE + ") REFERENCES " + TABLE_SUBJECT + "(" + SUBJECT_CODE + "))");
+
+        // Create SubjectClassroomDB table
+        db.execSQL("CREATE TABLE " + TABLE_SUBJECT_CLASSROOM + " (" +
+                SCD_ROOM_NO + " TEXT NOT NULL, " +
+                SCD_YEAR + " TEXT NOT NULL, " +
+                SCD_SUBJECT_CODE + " TEXT NOT NULL, " +
+                "PRIMARY KEY (" + SCD_ROOM_NO + ", " + SCD_YEAR + ", " + SCD_SUBJECT_CODE + "), " +
+                "FOREIGN KEY(" + SCD_ROOM_NO + ", " + SCD_YEAR + ") REFERENCES " + TABLE_CLASSROOM + "(" + CLASSROOM_ROOM + ", " + CLASSROOM_YEAR + "), " +
+                "FOREIGN KEY(" + SCD_SUBJECT_CODE + ") REFERENCES " + TABLE_SUBJECT + "(" + SUBJECT_CODE + "))");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older tables if they exist and recreate them
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEACHER_SUBJECT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SUBJECT_CLASSROOM);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEACHER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CLASSROOM);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PDF_STORAGE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SUBJECT);
         onCreate(db);
     }
 
-    // Insert into Teacher Table
-    public void insertTeacher(String name, String subject) {
-        SQLiteDatabase db = getWritableDatabase();
+
+    // ------------------------------------------ Add methods ------------------------------------------
+
+
+    // Add methods for TeacherDB, ClassroomDB, SubjectDB
+    public boolean addTeacher(String email, String name) {
+        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_TEACHER_NAME, name);
-        values.put(COLUMN_TEACHER_SUBJECT, subject);
-
-        long newRowId = db.insert(TABLE_TEACHER, null, values);
-        db.close();
-        Log.d("Database", "Inserted teacher with ID: " + newRowId);
+        values.put(TEACHER_EMAIL, email);
+        values.put(TEACHER_NAME, name);
+        long result = db.insert(TABLE_TEACHER, null, values);
+        return result != -1;
     }
 
-    // Insert into Classroom Table
-    public void insertClassroom(String name, String year, String type) {
-        SQLiteDatabase db = getWritableDatabase();
+    public boolean addClassroom(String room, String year, int capacity, String course, String type) {
+        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_CLASSROOM_NAME, name);
-        values.put(COLUMN_CLASSROOM_YEAR, year);
-        values.put(COLUMN_CLASSROOM_TYPE, type);
-
-        long newRowId = db.insert(TABLE_CLASSROOM, null, values);
-        db.close();
-        Log.d("Database", "Inserted classroom: " + name);
+        values.put(CLASSROOM_ROOM, room);
+        values.put(CLASSROOM_YEAR, year);
+        values.put(CLASSROOM_CAPACITY, capacity);
+        values.put(CLASSROOM_COURSE, course);
+        values.put(CLASSROOM_TYPE, type);
+        long result = db.insert(TABLE_CLASSROOM, null, values);
+        return result != -1;
     }
 
-    // Insert PDFs into PdfStorage Table
-    public void insertPdf(byte[] timetablePdf, byte[] teacherAllocationPdf) {
-        SQLiteDatabase db = getWritableDatabase();
+    public boolean addSubject(String code, String subject, int credits) {
+        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_TIMETABLE_PDF, timetablePdf);
-        values.put(COLUMN_TEACHER_ALLOCATION_PDF, teacherAllocationPdf);
-
-        long newRowId = db.insert(TABLE_PDF_STORAGE, null, values);
-        db.close();
-        Log.d("Database", "Inserted PDFs into PdfStorage with ID: " + newRowId);
+        values.put(SUBJECT_CODE, code);
+        values.put(SUBJECT_NAME, subject);
+        values.put(SUBJECT_CREDITS, credits);
+        long result = db.insert(TABLE_SUBJECT, null, values);
+        return result != -1;
     }
 
-    // Query the Teacher Table
-    public void queryTeachers() {
-        SQLiteDatabase db = getReadableDatabase();
-        String[] projection = {
-                COLUMN_TEACHER_ID,
-                COLUMN_TEACHER_NAME,
-                COLUMN_TEACHER_SUBJECT
-        };
-
-        Cursor cursor = db.query(TABLE_TEACHER, projection, null, null, null, null, null);
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                long teacherId = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_TEACHER_ID));
-                String teacherName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TEACHER_NAME));
-                String teacherSubject = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TEACHER_SUBJECT));
-
-                Log.d("Teacher", "ID: " + teacherId + ", Name: " + teacherName + ", Subject: " + teacherSubject);
-            }
-            cursor.close();
-        }
+    // Add methods for TeacherSubjectDB
+    public boolean addTeacherSubject(String teacherEmail, String subjectCode) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(TSD_TEACHER_EMAIL, teacherEmail);
+        values.put(TSD_SUBJECT_CODE, subjectCode);
+        long result = db.insert(TABLE_TEACHER_SUBJECT, null, values);
+        return result != -1;
     }
 
-    // Query the Classroom Table
-    public void queryClassrooms() {
-        SQLiteDatabase db = getReadableDatabase();
-        String[] projection = {
-                COLUMN_CLASSROOM_NAME,
-                COLUMN_CLASSROOM_YEAR,
-                COLUMN_CLASSROOM_TYPE
-        };
-
-        Cursor cursor = db.query(TABLE_CLASSROOM, projection, null, null, null, null, null);
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                String classroomName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CLASSROOM_NAME));
-                String classroomYear = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CLASSROOM_YEAR));
-                String classroomType = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CLASSROOM_TYPE));
-
-                Log.d("Classroom", "Name: " + classroomName + ", Year: " + classroomYear + ", Type: " + classroomType);
-            }
-            cursor.close();
-        }
+    // Add methods for SubjectClassroomDB
+    public boolean addSubjectClassroom(String roomNo, String year, String subjectCode) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(SCD_ROOM_NO, roomNo);
+        values.put(SCD_YEAR, year);
+        values.put(SCD_SUBJECT_CODE, subjectCode);
+        long result = db.insert(TABLE_SUBJECT_CLASSROOM, null, values);
+        return result != -1;
     }
 
-    // Retrieve Timetable PDF from PdfStorage Table
-    public byte[] getTimetablePdf() {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(TABLE_PDF_STORAGE,
-                new String[]{COLUMN_TIMETABLE_PDF},
-                null, null, null, null, null);
+    // ------------------------------------------ Remove Methods ------------------------------------------
 
-        if (cursor != null && cursor.moveToFirst()) {
-            byte[] pdfBytes = cursor.getBlob(cursor.getColumnIndexOrThrow(COLUMN_TIMETABLE_PDF));
-            cursor.close();
-            return pdfBytes;
-        }
-        return null;
+    public boolean removeTeacher(String email) {
+        return delete(TABLE_TEACHER, TEACHER_EMAIL + "=?", new String[]{email});
     }
 
-
-    // Read PDF file from assets folder as byte array
-    public byte[] readPdfFromAssets(String fileName) throws IOException {
-        try (InputStream inputStream = context.getAssets().open(fileName);
-             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = inputStream.read(buffer)) != -1) {
-                byteArrayOutputStream.write(buffer, 0, length);
-            }
-            return byteArrayOutputStream.toByteArray();
-        }
+    public boolean removeClassroom(String room, String year) {
+        return delete(TABLE_CLASSROOM, CLASSROOM_ROOM + "=? AND " + CLASSROOM_YEAR + "=?", new String[]{room, year});
     }
 
-
-    //Deleting Data
-
-    // Method to delete a teacher by their TeacherID
-    public void deleteTeacher(long teacherId) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        // Define the `where` clause and its arguments
-        String whereClause = COLUMN_TEACHER_ID + " = ?";
-        String[] whereArgs = { String.valueOf(teacherId) };
-
-        // Perform the deletion
-        int rowsDeleted = db.delete(TABLE_TEACHER, whereClause, whereArgs);
-
-        // Close the database
-        db.close();
-
-        // Log the result
-        Log.d("Database", "Deleted teacher with ID: " + teacherId + ". Rows affected: " + rowsDeleted);
+    public boolean removeSubject(String code) {
+        return delete(TABLE_SUBJECT, SUBJECT_CODE + "=?", new String[]{code});
     }
 
-
-    // Method to delete a classroom by its name
-    public void deleteClassroom(String classroomName) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        // Define the `where` clause and its arguments
-        String whereClause = COLUMN_CLASSROOM_NAME + " = ?";
-        String[] whereArgs = { classroomName };
-
-        // Perform the deletion
-        int rowsDeleted = db.delete(TABLE_CLASSROOM, whereClause, whereArgs);
-
-        // Close the database
-        db.close();
-
-        // Log the result
-        Log.d("Database", "Deleted classroom: " + classroomName + ". Rows affected: " + rowsDeleted);
+    public boolean removeTeacherSubject(String teacherEmail, String subjectCode) {
+        return delete(TABLE_TEACHER_SUBJECT, TSD_TEACHER_EMAIL + "=? AND " + TSD_SUBJECT_CODE + "=?", new String[]{teacherEmail, subjectCode});
     }
+
+    public boolean removeSubjectClassroom(String roomNo, String year, String subjectCode) {
+        return delete(TABLE_SUBJECT_CLASSROOM, SCD_ROOM_NO + "=? AND " + SCD_YEAR + "=? AND " + SCD_SUBJECT_CODE + "=?", new String[]{roomNo, year, subjectCode});
+    }
+
+    // Generalized deletion
+    private boolean delete(String tableName, String whereClause, String[] whereArgs) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int result = db.delete(tableName, whereClause, whereArgs);
+        return result > 0;
+    }
+
+    // ------------------------------------------ View Methods ------------------------------------------
+
+    public Cursor viewTable(String tableName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM " + tableName, null);
+    }
+
+    public Cursor viewTeacher(String email) {
+        return query(TABLE_TEACHER, null, TEACHER_EMAIL + "=?", new String[]{email});
+    }
+
+    public Cursor viewClassroom(String room, String year) {
+        return query(TABLE_CLASSROOM, null, CLASSROOM_ROOM + "=? AND " + CLASSROOM_YEAR + "=?", new String[]{room, year});
+    }
+
+    public Cursor viewSubject(String code) {
+        return query(TABLE_SUBJECT, null, SUBJECT_CODE + "=?", new String[]{code});
+    }
+
+    public Cursor viewTeacherSubject(String teacherEmail) {
+        return query(TABLE_TEACHER_SUBJECT, null, TSD_TEACHER_EMAIL + "=?", new String[]{teacherEmail});
+    }
+
+    public Cursor viewSubjectClassroom(String roomNo, String year) {
+        return query(TABLE_SUBJECT_CLASSROOM, null, SCD_ROOM_NO + "=? AND " + SCD_YEAR + "=?", new String[]{roomNo, year});
+    }
+
+    // Generalized query
+    private Cursor query(String tableName, String[] columns, String selection, String[] selectionArgs) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.query(tableName, columns, selection, selectionArgs, null, null, null);
+    }
+
+    // ------------------------------------------ Update Methods ------------------------------------------
+
+    public boolean updateTeacher(String email, String name) {
+        ContentValues values = new ContentValues();
+        values.put(TEACHER_NAME, name);
+        return update(TABLE_TEACHER, values, TEACHER_EMAIL + "=?", new String[]{email});
+    }
+
+    public boolean updateClassroom(String room, String year, int capacity, String course, String type) {
+        ContentValues values = new ContentValues();
+        values.put(CLASSROOM_CAPACITY, capacity);
+        values.put(CLASSROOM_COURSE, course);
+        values.put(CLASSROOM_TYPE, type);
+        return update(TABLE_CLASSROOM, values, CLASSROOM_ROOM + "=? AND " + CLASSROOM_YEAR + "=?", new String[]{room, year});
+    }
+
+    public boolean updateSubject(String code, String subject, int credits) {
+        ContentValues values = new ContentValues();
+        values.put(SUBJECT_NAME, subject);
+        values.put(SUBJECT_CREDITS, credits);
+        return update(TABLE_SUBJECT, values, SUBJECT_CODE + "=?", new String[]{code});
+    }
+
+    // Generalized update
+    private boolean update(String tableName, ContentValues values, String whereClause, String[] whereArgs) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int result = db.update(tableName, values, whereClause, whereArgs);
+        return result > 0;
+    }
+
+    public boolean updateTeacherSubject(String teacherEmail, String oldSubjectCode, String newSubjectCode) {
+        ContentValues values = new ContentValues();
+        values.put(TSD_SUBJECT_CODE, newSubjectCode);
+
+        // Update the subject for the teacher with the old subject code
+        return update(TABLE_TEACHER_SUBJECT, values, TSD_TEACHER_EMAIL + "=? AND " + TSD_SUBJECT_CODE + "=?",
+                new String[]{teacherEmail, oldSubjectCode});
+    }
+
+    public boolean updateSubjectClassroom(String oldRoomNo, String oldYear, String oldSubjectCode,
+                                          String newRoomNo, String newYear, String newSubjectCode) {
+        ContentValues values = new ContentValues();
+        values.put(SCD_ROOM_NO, newRoomNo);
+        values.put(SCD_YEAR, newYear);
+        values.put(SCD_SUBJECT_CODE, newSubjectCode);
+
+        // Update the room and year for the subject
+        return update(TABLE_SUBJECT_CLASSROOM, values, SCD_ROOM_NO + "=? AND " + SCD_YEAR + "=? AND " + SCD_SUBJECT_CODE + "=?",
+                new String[]{oldRoomNo, oldYear, oldSubjectCode});
+    }
+
 
 }

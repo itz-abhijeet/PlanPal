@@ -7,10 +7,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckedTextView;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -19,8 +19,8 @@ import androidx.appcompat.app.AppCompatActivity;
 public class AddClassroom extends AppCompatActivity {
 
     Spinner yearSpinner;
-    TextView className;
-    Button addCLass;
+    EditText classNo, capacity, courseCode;
+    Button addClassroom;
     RadioGroup classRg;
     RadioButton classRb;
     DatabaseHelper databaseHelper;
@@ -32,25 +32,23 @@ public class AddClassroom extends AppCompatActivity {
         setContentView(R.layout.activity_add_classroom);
 
         databaseHelper = new DatabaseHelper(this);
-        classRg = findViewById(R.id.addClassroom_radioGroup); // Assuming you have a RadioGroup with id `classRg`
+        classRg = findViewById(R.id.addClassroom_radioGroup);
         yearSpinner = findViewById(R.id.yearSpinner);
-        className = findViewById(R.id.addClassroom_no);
-        addCLass = findViewById(R.id.addClassroom_Add);
+        classNo = findViewById(R.id.addClassroom_no);
+        capacity = findViewById(R.id.addClassroom_capacity);
+        courseCode = findViewById(R.id.addClassroom_courseCode);
+        addClassroom = findViewById(R.id.addClassroom_Add);
 
-        final String[] classNo = {""};
-        final String[] selectedYear = {""};
-        final String[] classtype = {""};
-
+        // Year options for the spinner
         String[] yearOptions = {"First Year", "Second Year", "Third Year"};
 
-        // Create an ArrayAdapter using the custom CheckedTextView layout
+        // Create an ArrayAdapter for the Spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, yearOptions) {
-
             @Override
             public View getDropDownView(int position, View convertView, ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
                 CheckedTextView textView = (CheckedTextView) view;
-                textView.setTextColor(getResources().getColor(R.color.black)); // Ensure text color is black
+                textView.setTextColor(getResources().getColor(R.color.black));
                 return view;
             }
 
@@ -58,20 +56,20 @@ public class AddClassroom extends AppCompatActivity {
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 CheckedTextView textView = (CheckedTextView) view;
-                textView.setTextColor(getResources().getColor(R.color.black)); // Ensure text color is black
+                textView.setTextColor(getResources().getColor(R.color.black));
                 return view;
             }
         };
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // Apply the adapter to the spinner
         yearSpinner.setAdapter(adapter);
 
+        // Set listener for spinner selection
         yearSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedYear[0] = parent.getItemAtPosition(position).toString();
+                // No additional actions are needed since selected year is directly fetched later
             }
 
             @Override
@@ -80,37 +78,54 @@ public class AddClassroom extends AppCompatActivity {
             }
         });
 
-        addCLass.setOnClickListener(new View.OnClickListener() {
+        addClassroom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Get the entered class name from the TextView
-                classNo[0] = className.getText().toString(); // Correct way to get text from EditText
+                // Get input values
+                String roomNumber = classNo.getText().toString().trim();
+                String selectedYear = yearSpinner.getSelectedItem().toString();
+                String classCapacity = capacity.getText().toString().trim();
+                String course = courseCode.getText().toString().trim();
 
-                // Get the selected year from Spinner
-                String selectedYearValue = selectedYear[0]; // This will contain the selected item in Spinner
-
-                // Get the selected class type from RadioGroup
+                // Get selected type from RadioGroup
                 int selectedRadioButtonId = classRg.getCheckedRadioButtonId();
+                String classType;
                 if (selectedRadioButtonId != -1) {
-                    classRb = findViewById(selectedRadioButtonId); // Get the selected RadioButton
-                    classtype[0] = classRb.getText().toString();  // Get the text of the selected RadioButton
+                    classRb = findViewById(selectedRadioButtonId);
+                    classType = classRb.getText().toString();
                 } else {
-                    classtype[0] = "No class type selected"; // Handle case when no radio button is selected
+                    classType = ""; // No type selected
                 }
 
-                if(classNo[0].isEmpty() || selectedYear[0].isEmpty() || classtype[0].isEmpty()){
-                    Toast.makeText(AddClassroom.this, "Fill the fields properly", Toast.LENGTH_SHORT).show();
+                // Validate inputs
+                if (roomNumber.isEmpty() || classCapacity.isEmpty() || course.isEmpty() || classType.isEmpty()) {
+                    Toast.makeText(AddClassroom.this, "Fill all fields properly", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
-                else{
-                    // Now you can use the classNo, selectedYearValue, and classtype for further processing
-                    Toast.makeText(AddClassroom.this, "Class: " + classNo[0] + "\nYear: " + selectedYearValue + "\nType: " + classtype[0], Toast.LENGTH_SHORT).show();
-                    databaseHelper.insertClassroom(classNo[0], selectedYear[0], classtype[0]);
-                    className.setText("");
+                int capacityValue;
+                try {
+                    capacityValue = Integer.parseInt(classCapacity);
+                } catch (NumberFormatException e) {
+                    Toast.makeText(AddClassroom.this, "Capacity must be a number", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
+                // Insert into database
+                boolean isAdded = databaseHelper.addClassroom(roomNumber, selectedYear, capacityValue, course, classType);
+                if (isAdded) {
+                    Toast.makeText(AddClassroom.this, "Classroom added successfully", Toast.LENGTH_SHORT).show();
+
+                    // Clear input fields
+                    classNo.setText("");
+                    capacity.setText("");
+                    courseCode.setText("");
+                    classRg.clearCheck();
+                    yearSpinner.setSelection(0);
+                } else {
+                    Toast.makeText(AddClassroom.this, "Error adding classroom. Check for duplicate entries.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
-
     }
 }

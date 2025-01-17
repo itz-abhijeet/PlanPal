@@ -15,7 +15,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class HomeActivity extends AppCompatActivity {
 
-    LinearLayout home_generateTimetable, home_Teacher, home_Classroom, home_dashboard;
+    LinearLayout home_generateTimetable, home_Teacher, home_Classroom, home_subject, home_teacherSubject, home_subjectClassroom, home_support, home_dashboard;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -25,10 +25,12 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         // Initialize views
-        home_generateTimetable = findViewById(R.id.Home_generateTimetable);
-        home_Teacher = findViewById(R.id.Home_Teacher);
+
         home_Classroom = findViewById(R.id.Home_Classroom);
+        home_Teacher = findViewById(R.id.Home_Teacher);
+        home_generateTimetable = findViewById(R.id.Home_generateTimetable);
         home_dashboard = findViewById(R.id.Home_dashboard);
+        home_support = findViewById(R.id.Home_support);
 
         home_generateTimetable.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,5 +63,15 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent_dashboard);
             }
         });
+
+        home_support.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent_support = new Intent(HomeActivity.this, ContactUs.class);
+                startActivity(intent_support);
+            }
+        });
+
+
     }
 }

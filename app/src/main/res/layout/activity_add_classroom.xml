@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/textbox_background"
-                android:hint="Class Name/ Number"
+                android:hint="Room Number"
                 android:padding="15dp"
                 android:text=""
                 android:textColor="@color/black"
@@ -87,6 +87,36 @@
                 android:popupBackground="@drawable/textbox_background"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/textbox_background"
+                />
+
+            <EditText
+                android:id="@+id/addClassroom_capacity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/textbox_background"
+                android:hint="Capacity"
+                android:padding="15dp"
+                android:text=""
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="17sp"
+                android:fontFamily="@font/teachers"
+                />
+
+            <EditText
+                android:id="@+id/addClassroom_courseCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/textbox_background"
+                android:hint="Course code"
+                android:padding="15dp"
+                android:text=""
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="17sp"
+                android:fontFamily="@font/teachers"
                 />
 
             <RadioGroup
