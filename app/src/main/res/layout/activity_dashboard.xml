@@ -83,49 +83,6 @@
                 android:textSize="17sp" />
 
             <Button
-                android:layout_width="match_parent"
-                android:layout_height="75dp"
-                android:text="Teacher assignment"
-                android:fontFamily="@font/teachers"
-                android:textSize="17sp"
-                android:layout_gravity="center"
-                android:gravity="center_vertical"
-                android:textColor="@color/whale_blue"
-                android:backgroundTint="@color/white"
-                android:layout_marginBottom="10dp"
-                android:drawableEnd="@drawable/image_arrow_right"
-                />
-
-            <Button
-                android:id="@+id/Dashboard_RemoveTeacher"
-                android:layout_width="match_parent"
-                android:layout_height="75dp"
-                android:text="Remove Teacher"
-                android:fontFamily="@font/teachers"
-                android:textSize="17sp"
-                android:layout_gravity="center"
-                android:gravity="center_vertical"
-                android:textColor="@color/whale_blue"
-                android:backgroundTint="@color/white"
-                android:layout_marginBottom="10dp"
-                android:drawableEnd="@drawable/image_arrow_right"
-                />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="75dp"
-                android:text="Remove Classroom"
-                android:fontFamily="@font/teachers"
-                android:textSize="17sp"
-                android:layout_gravity="center"
-                android:gravity="center_vertical"
-                android:textColor="@color/whale_blue"
-                android:backgroundTint="@color/white"
-                android:layout_marginBottom="10dp"
-                android:drawableEnd="@drawable/image_arrow_right"
-                />
-
-            <Button
                 android:id="@+id/Dashboard_ContactUs"
                 android:layout_width="match_parent"
                 android:layout_height="75dp"
