@@ -11,26 +11,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 2; // Incremented version for changes
 
     // Table names
-    private static final String TABLE_TEACHER = "TeacherDB";
-    private static final String TABLE_CLASSROOM = "ClassroomDB";
-    private static final String TABLE_SUBJECT = "SubjectDB";
+    public static final String TABLE_TEACHER = "TeacherDB";
+    public static final String TABLE_CLASSROOM = "ClassroomDB";
+    public static final String TABLE_SUBJECT = "SubjectDB";
     private static final String TABLE_TEACHER_SUBJECT = "TeacherSubjectDB";
     private static final String TABLE_SUBJECT_CLASSROOM = "SubjectClassroomDB";
+    private static final String TABLE_TIMETABLE = "TimetableDB";
+
 
     // Columns for TeacherDB
     private static final String TEACHER_EMAIL = "email";
     private static final String TEACHER_NAME = "name";
 
     // Columns for ClassroomDB
-    private static final String CLASSROOM_ROOM = "room_number";
-    private static final String CLASSROOM_YEAR = "year";
-    private static final String CLASSROOM_CAPACITY = "capacity";
-    private static final String CLASSROOM_COURSE = "course_code";
-    private static final String CLASSROOM_TYPE = "type";
+    public static final String CLASSROOM_ROOM = "room_number";
+    public static final String CLASSROOM_YEAR = "year";
+    public static final String CLASSROOM_CAPACITY = "capacity";
+    public static final String CLASSROOM_COURSE = "course_code";
+    public static final String CLASSROOM_TYPE = "type";
 
     // Columns for SubjectDB
-    private static final String SUBJECT_CODE = "code";
-    private static final String SUBJECT_NAME = "subject";
+    public static final String SUBJECT_CODE = "code";
+    public static final String SUBJECT_NAME = "subject";
     private static final String SUBJECT_CREDITS = "credits";
 
     // Columns for TeacherSubjectDB
@@ -41,6 +43,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SCD_ROOM_NO = "room_number";
     private static final String SCD_YEAR = "year";
     private static final String SCD_SUBJECT_CODE = "subject_code";
+
+    // Columns for TimetableDB
+    private static final String TIMETABLE_DAY = "day";
+    private static final String TIMETABLE_HOUR = "hour";
+    private static final String TIMETABLE_SUBJECT_CODE = "subject_code";
+    private static final String TIMETABLE_ROOM_NO = "room_number";
+    private static final String TIMETABLE_YEAR = "year";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -85,6 +94,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "PRIMARY KEY (" + SCD_ROOM_NO + ", " + SCD_YEAR + ", " + SCD_SUBJECT_CODE + "), " +
                 "FOREIGN KEY(" + SCD_ROOM_NO + ", " + SCD_YEAR + ") REFERENCES " + TABLE_CLASSROOM + "(" + CLASSROOM_ROOM + ", " + CLASSROOM_YEAR + "), " +
                 "FOREIGN KEY(" + SCD_SUBJECT_CODE + ") REFERENCES " + TABLE_SUBJECT + "(" + SUBJECT_CODE + "))");
+
+        db.execSQL("CREATE TABLE " + TABLE_TIMETABLE + " (" +
+                TIMETABLE_DAY + " TEXT NOT NULL, " +
+                TIMETABLE_HOUR + " INTEGER NOT NULL, " +
+                TIMETABLE_SUBJECT_CODE + " TEXT NOT NULL, " +
+                TIMETABLE_ROOM_NO + " TEXT NOT NULL, " +
+                TIMETABLE_YEAR + " TEXT NOT NULL, " +
+                "PRIMARY KEY (" + TIMETABLE_DAY + ", " + TIMETABLE_HOUR + ", " + TIMETABLE_ROOM_NO + ", " + TIMETABLE_YEAR + "), " +
+                "FOREIGN KEY(" + TIMETABLE_SUBJECT_CODE + ") REFERENCES " + TABLE_SUBJECT + "(" + SUBJECT_CODE + "), " +
+                "FOREIGN KEY(" + TIMETABLE_ROOM_NO + ", " + TIMETABLE_YEAR + ") REFERENCES " + TABLE_CLASSROOM + "(" + CLASSROOM_ROOM + ", " + CLASSROOM_YEAR + "))");
     }
 
     @Override
@@ -265,6 +284,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Update the room and year for the subject
         return update(TABLE_SUBJECT_CLASSROOM, values, SCD_ROOM_NO + "=? AND " + SCD_YEAR + "=? AND " + SCD_SUBJECT_CODE + "=?",
                 new String[]{oldRoomNo, oldYear, oldSubjectCode});
+    }
+
+    // Add this method to DatabaseHelper
+    public boolean addTimetableEntry(int dayIndex, int hour, String subjectCode, String roomNumber, String year) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(TIMETABLE_DAY, dayIndex);
+        values.put(TIMETABLE_HOUR, hour);
+        values.put(TIMETABLE_SUBJECT_CODE, subjectCode);
+        values.put(TIMETABLE_ROOM_NO, roomNumber);
+        values.put(TIMETABLE_YEAR, year);
+        long result = db.insert(TABLE_TIMETABLE, null, values);
+        return result != -1;
     }
 
 
