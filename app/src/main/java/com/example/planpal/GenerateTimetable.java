@@ -3,28 +3,28 @@ package com.example.planpal;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
-import com.example.planpal.DatabaseHelper;
-
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 
 public class GenerateTimetable extends AppCompatActivity {
 
-    private TableLayout timetableTable;
+    private TableLayout timetableTable1, timetableTable2, timetableTable3;
     private Button generateTimetableButton;
     private DatabaseHelper dbHelper;
-    TextView nameofInstitute;
+    TextView nameofInstitute, c1, c2, c3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,159 +32,210 @@ public class GenerateTimetable extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_generate_timetable);
 
-
         nameofInstitute = findViewById(R.id.nameofInstitute);
-        timetableTable = findViewById(R.id.timetableTable);
+        timetableTable1 = findViewById(R.id.timetableTable1);
+        timetableTable2 = findViewById(R.id.timetableTable2);
+        timetableTable3 = findViewById(R.id.timetableTable3);
         generateTimetableButton = findViewById(R.id.generateTimetableButton);
         dbHelper = new DatabaseHelper(this);
 
-        generateTimetableButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                generateTimetable();
-            }
-        });
+        c1 = findViewById(R.id.class1text);
+        c2 = findViewById(R.id.class2text);
+        c3 = findViewById(R.id.class3text);
+
+
+        generateTimetableButton.setOnClickListener(v -> generateTimetables());
     }
 
-    private void generateTimetable() {
-        clearTimetable();
+
+    private void generateTimetables() {
+        clearTimetables();
         nameofInstitute.setVisibility(View.VISIBLE);
+        c1.setVisibility(View.VISIBLE);
+        c2.setVisibility(View.VISIBLE);
+        c3.setVisibility(View.VISIBLE);
 
-        // Array to hold day names
         String[] days = {"MON", "TUE", "WED", "THU", "FRI", "SAT"};
+        TableLayout[] timetables = {timetableTable1, timetableTable2, timetableTable3};
 
-        // Create header row for hour indices (1 to 6)
+        // Fetch subjects once and shuffle them
+        List<String> allSubjects = fetchAllSubjects();
+
+        if (allSubjects.isEmpty()) {
+            Toast.makeText(this,"Subjects doesn't exists",Toast.LENGTH_SHORT).show();
+            return; // No subjects in DB
+        }
+
+        for (TableLayout table : timetables) {
+            TableRow headerRow = createHeaderRow();
+            table.addView(headerRow);
+
+            for (String day : days) {
+                TableRow row = new TableRow(this);
+                row.setLayoutParams(new TableRow.LayoutParams(
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        TableRow.LayoutParams.WRAP_CONTENT
+                ));
+
+                TextView dayCell = new TextView(this);
+                dayCell.setLayoutParams(new TableRow.LayoutParams(
+                        0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f
+                ));
+                dayCell.setPadding(8, 8, 8, 8);
+                dayCell.setTextSize(16);
+                dayCell.setText(day);
+                dayCell.setTextColor(Color.BLACK);
+                row.addView(dayCell);
+
+                // Shuffle a new subject list for each day to ensure variety
+                List<String> dailySubjects = new ArrayList<>(allSubjects);
+                Collections.shuffle(dailySubjects);
+
+                for (int hour = 0; hour < 6; hour++) {
+                    TextView cell = new TextView(this);
+                    cell.setLayoutParams(new TableRow.LayoutParams(
+                            0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f
+                    ));
+                    cell.setPadding(8, 8, 8, 8);
+                    cell.setTextSize(16);
+
+                    String subject = dailySubjects.get(hour % dailySubjects.size());
+                    cell.setText(subject);
+                    cell.setTextColor(Color.BLACK);
+                    row.addView(cell);
+                }
+
+                table.addView(row);
+            }
+        }
+    }
+
+
+
+//    private void generateTimetables() {
+//        clearTimetables();
+//        nameofInstitute.setVisibility(View.VISIBLE);
+//
+//        String[] days = {"MON", "TUE", "WED", "THU", "FRI", "SAT"};
+//        TableLayout[] timetables = {timetableTable1, timetableTable2, timetableTable3};
+//
+//        // Fetch subjects from the database
+//        List<String> allSubjects = fetchAllSubjects();
+//
+//        if (allSubjects.isEmpty()) {
+//            return; // No subjects in DB
+//        }
+//
+//        for (int i = 0; i < days.length; i++) { // Loop through days
+//            String day = days[i];
+//
+//            TableRow[] rows = new TableRow[timetables.length];
+//            List<HashSet<String>> slotTrackers = new ArrayList<>();
+//
+//            for (int slot = 0; slot < 6; slot++) {
+//                slotTrackers.add(new HashSet<>()); // Create a tracker for each slot
+//            }
+//
+//            for (int j = 0; j < timetables.length; j++) { // Loop through tables
+//                TableLayout table = timetables[j];
+//
+//                // Create a new row for this day
+//                TableRow row = new TableRow(this);
+//                row.setLayoutParams(new TableRow.LayoutParams(
+//                        TableRow.LayoutParams.MATCH_PARENT,
+//                        TableRow.LayoutParams.WRAP_CONTENT
+//                ));
+//
+//                // Create the first column with the day name
+//                if (j == 0) {
+//                    TextView dayCell = new TextView(this);
+//                    dayCell.setLayoutParams(new TableRow.LayoutParams(
+//                            0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f
+//                    ));
+//                    dayCell.setPadding(8, 8, 8, 8);
+//                    dayCell.setTextSize(16);
+//                    dayCell.setText(day);
+//                    dayCell.setTextColor(Color.BLACK);
+//                    row.addView(dayCell);
+//                }
+//
+//                // Shuffle a new subject list for each day
+//                List<String> dailySubjects = new ArrayList<>(allSubjects);
+//                Collections.shuffle(dailySubjects);
+//
+//                for (int slot = 0; slot < 6; slot++) {
+//                    TextView cell = new TextView(this);
+//                    cell.setLayoutParams(new TableRow.LayoutParams(
+//                            0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f
+//                    ));
+//                    cell.setPadding(8, 8, 8, 8);
+//                    cell.setTextSize(16);
+//
+//                    // Assign a subject
+//                    String subject = dailySubjects.get(slot % dailySubjects.size());
+//                    cell.setText(subject);
+//                    cell.setTextColor(Color.BLACK);
+//
+//                    // Check for overlap
+//                    if (!slotTrackers.get(slot).add(subject)) {
+//                        // If subject already exists in this slot, it's an overlap
+//                        cell.setBackgroundColor(Color.RED);
+//                    }
+//
+//                    row.addView(cell);
+//                }
+//
+//                table.addView(row);
+//                rows[j] = row;
+//            }
+//        }
+//    }
+
+
+
+    private TableRow createHeaderRow() {
         TableRow headerRow = new TableRow(this);
         headerRow.setLayoutParams(new TableRow.LayoutParams(
                 TableRow.LayoutParams.MATCH_PARENT,
                 TableRow.LayoutParams.WRAP_CONTENT
         ));
 
-        // Add empty cell for the top-left corner
         TextView emptyCell = new TextView(this);
         emptyCell.setLayoutParams(new TableRow.LayoutParams(
-                0,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                1.0f
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f
         ));
         headerRow.addView(emptyCell);
 
-        // Add hour headers (1 to 6)
         for (int hour = 1; hour <= 6; hour++) {
             TextView hourCell = new TextView(this);
             hourCell.setLayoutParams(new TableRow.LayoutParams(
-                    0,
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    1.0f
+                    0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f
             ));
             hourCell.setPadding(8, 8, 8, 8);
             hourCell.setTextSize(16);
             hourCell.setText(String.valueOf(hour));
-            headerRow.addView(hourCell);
             hourCell.setTextColor(Color.BLACK);
+            headerRow.addView(hourCell);
         }
-
-        // Add header row to the timetable table
-        timetableTable.addView(headerRow);
-
-        // Loop through each day (Mon to Fri)
-        for (int dayIndex = 0; dayIndex < 6; dayIndex++) {
-            TableRow row = new TableRow(this);
-            row.setLayoutParams(new TableRow.LayoutParams(
-                    TableRow.LayoutParams.MATCH_PARENT,
-                    TableRow.LayoutParams.WRAP_CONTENT
-            ));
-
-            // Add day name cell (Mon to Fri)
-            TextView dayCell = new TextView(this);
-            dayCell.setLayoutParams(new TableRow.LayoutParams(
-                    0,
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    1.0f
-            ));
-            dayCell.setPadding(8, 8, 8, 8);
-            dayCell.setTextSize(16);
-            dayCell.setText(days[dayIndex]);
-            row.addView(dayCell);
-            dayCell.setTextColor(Color.BLACK);
-
-            // Loop through each hour (1 to 6)
-            for (int hour = 1; hour <= 6; hour++) {
-                TextView cell = new TextView(this);
-                cell.setLayoutParams(new TableRow.LayoutParams(
-                        0,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        1.0f
-                ));
-                cell.setPadding(8, 8, 8, 8);
-                cell.setTextSize(16);
-                cell.setText("Loading..."); // Placeholder text
-
-                // Fetch and display a random subject for the current day and hour
-                fetchRandomSubject(dayIndex, hour, cell);
-
-                cell.setTextColor(Color.BLACK);
-                row.addView(cell);
-            }
-
-            // Add row to the timetable table
-            timetableTable.addView(row);
-        }
+        return headerRow;
     }
 
-    private void fetchRandomSubject(final int dayIndex, final int hour, final TextView cell) {
-        // Fetch all subjects from the database
+    private List<String> fetchAllSubjects() {
+        List<String> subjects = new ArrayList<>();
         Cursor subjectCursor = dbHelper.viewTable(DatabaseHelper.TABLE_SUBJECT);
 
-        if (subjectCursor != null && subjectCursor.getCount() > 0) {
-            // Generate a random index
-            int randomIndex = new Random().nextInt(subjectCursor.getCount());
-
-            // Move the cursor to the random index
-            subjectCursor.moveToPosition(randomIndex);
-
-            // Get the subject name and code
+        while (subjectCursor.moveToNext()) {
             String subjectName = subjectCursor.getString(subjectCursor.getColumnIndexOrThrow(DatabaseHelper.SUBJECT_NAME));
-            String subjectCode = subjectCursor.getString(subjectCursor.getColumnIndexOrThrow(DatabaseHelper.SUBJECT_CODE));
-
-
-            // Display the subject name in the cell
-            cell.setText(subjectName);
-
-            // Save the timetable entry to the database
-            saveTimetableEntry(dayIndex, hour, subjectCode);
-        } else {
-            cell.setText("No subjects found");
+            subjects.add(subjectName);
         }
 
-        if (subjectCursor != null) {
-            subjectCursor.close();
-        }
+        subjectCursor.close();
+        return subjects;
     }
 
-    private void saveTimetableEntry(int dayIndex, int hour, String subjectCode) {
-        // Fetch a random classroom for the subject
-        Cursor classroomCursor = dbHelper.viewTable(DatabaseHelper.TABLE_CLASSROOM);
-
-        if (classroomCursor != null && classroomCursor.getCount() > 0) {
-            int randomIndex = new Random().nextInt(classroomCursor.getCount());
-            classroomCursor.moveToPosition(randomIndex);
-
-            // Get the room number and year
-            String roomNumber = classroomCursor.getString(classroomCursor.getColumnIndexOrThrow(DatabaseHelper.CLASSROOM_ROOM));
-            String year = classroomCursor.getString(classroomCursor.getColumnIndexOrThrow(DatabaseHelper.CLASSROOM_YEAR));
-
-            // Save the timetable entry to the database
-            dbHelper.addTimetableEntry(dayIndex, hour, subjectCode, roomNumber, year);
-        }
-
-        if (classroomCursor != null) {
-            classroomCursor.close();
-        }
-    }
-
-    private void clearTimetable() {
-        // Clear existing rows in timetableTable
-        timetableTable.removeAllViews();
+    private void clearTimetables() {
+        timetableTable1.removeAllViews();
+        timetableTable2.removeAllViews();
+        timetableTable3.removeAllViews();
     }
 }

@@ -48,18 +48,7 @@
             android:id="@+id/Subject_RemoveSubject"
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:text="Remove Subject"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:fontFamily="@font/teachers"
-            android:backgroundTint="@color/white"
-            />
-
-        <Button
-            android:id="@+id/Subject_ViewSubject"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:text="View Subject"
+            android:text="View/ Remove Subject"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:fontFamily="@font/teachers"

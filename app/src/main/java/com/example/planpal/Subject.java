@@ -32,7 +32,7 @@ public class Subject extends AppCompatActivity {
         AddSubject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Subject.this, AddSubject.class);
+                Intent i = new Intent(Subject.this, com.example.planpal.AddSubject.class);
                 startActivity(i);
             }
         });

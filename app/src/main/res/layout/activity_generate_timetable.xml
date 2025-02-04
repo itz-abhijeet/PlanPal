@@ -53,10 +53,77 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_below="@id/nameofInstitute">
+
+            <TextView
+                android:id="@+id/class1text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Class 1"
+                android:fontFamily="@font/teachers"
+                android:textColor="@color/whale_blue"
+                android:textAlignment="viewStart"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:visibility="gone"
+                android:textSize="17sp"
+                />
 
             <TableLayout
-                android:id="@+id/timetableTable"
+                android:id="@+id/timetableTable1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="5dp"
+                android:divider="@color/black"
+                android:showDividers="middle"
+                android:dividerHeight="2dp"
+                android:textAlignment="center"
+                >
+
+            </TableLayout>
+
+            <TextView
+                android:id="@+id/class2text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Class 2"
+                android:fontFamily="@font/teachers"
+                android:textColor="@color/whale_blue"
+                android:textAlignment="viewStart"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:visibility="gone"
+                android:textSize="17sp"
+                />
+
+            <TableLayout
+                android:id="@+id/timetableTable2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="5dp"
+                android:divider="@color/black"
+                android:showDividers="middle"
+                android:dividerHeight="2dp"
+                >
+            </TableLayout>
+
+            <TextView
+                android:id="@+id/class3text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Class 3"
+                android:fontFamily="@font/teachers"
+                android:textColor="@color/whale_blue"
+                android:textAlignment="viewStart"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:visibility="gone"
+                android:textSize="17sp"
+                />
+
+            <TableLayout
+                android:id="@+id/timetableTable3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="5dp"
