@@ -45,12 +45,14 @@
         />
 
     <ScrollView
+        android:id="@+id/timetablelayout"
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/nameofInstitute">
 
         <LinearLayout
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -135,6 +137,21 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <Button
+        android:id="@+id/savePdfButton"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_below="@+id/timetablelayout"
+        android:layout_alignParentRight="true"
+        android:layout_margin="30dp"
+        android:backgroundTint="@color/whale_blue"
+        android:text="Save"
+        android:textStyle="bold"
+        android:textSize="17sp"
+        android:fontFamily="@font/teachers"
+        android:textColor="@color/white"
+        />
 
 </RelativeLayout>
 
