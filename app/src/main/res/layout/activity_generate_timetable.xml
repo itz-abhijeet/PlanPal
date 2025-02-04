@@ -151,6 +151,7 @@
         android:textSize="17sp"
         android:fontFamily="@font/teachers"
         android:textColor="@color/white"
+        android:visibility="gone"
         />
 
 </RelativeLayout>

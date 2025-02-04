@@ -22,15 +22,20 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.itextpdf.kernel.pdf.PdfWriter;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
 import android.Manifest;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -81,6 +86,7 @@ public class GenerateTimetable extends AppCompatActivity {
         c1.setVisibility(View.VISIBLE);
         c2.setVisibility(View.VISIBLE);
         c3.setVisibility(View.VISIBLE);
+        savePdfButton.setVisibility(View.VISIBLE);
 
         String[] days = {"MON", "TUE", "WED", "THU", "FRI", "SAT"};
         TableLayout[] timetables = {timetableTable1, timetableTable2, timetableTable3};
@@ -270,13 +276,21 @@ public class GenerateTimetable extends AppCompatActivity {
     // ----------------PDF Saving
 
 
+//    private void sharePDF(Uri fileUri) {
+//        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+//        shareIntent.setType("application/pdf");
+//        shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);  // Add the PDF file URI
+//        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);  // Grant permission to apps to read the file
+//
+//        // Start the share intent to allow user to choose an app to share the file
+//        startActivity(Intent.createChooser(shareIntent, "Share Timetable PDF"));
+//    }
+
     private void sharePDF(Uri fileUri) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("application/pdf");
-        shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);  // Add the PDF file URI
-        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);  // Grant permission to apps to read the file
-
-        // Start the share intent to allow user to choose an app to share the file
+        shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // Grant permission to apps to read the file
         startActivity(Intent.createChooser(shareIntent, "Share Timetable PDF"));
     }
 
@@ -293,13 +307,20 @@ public class GenerateTimetable extends AppCompatActivity {
         }
 
         try {
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault());
+            String currentDateAndTime = sdf.format(new Date());
+
+            // Generate the file name with "PlanPal" and the current date and time
+            String fileName = "PlanPal_" + currentDateAndTime + ".pdf";
             // For Android 10 and above, use MediaStore API to save in the Downloads folder
             ContentValues values = new ContentValues();
-            values.put(MediaStore.MediaColumns.DISPLAY_NAME, "Timetable.pdf"); // File name
+            values.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName); // File name
             values.put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf");
             values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
 
             // Get the content resolver and insert the new file in Downloads
+            //Uri uri = FileProvider.getUriForFile(this, "com.example.planpal.fileprovider", pdfFile);
             Uri uri = getContentResolver().insert(MediaStore.Files.getContentUri("external"), values);
 
             // Write to the OutputStream of the URI

@@ -16,7 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 public class Dashboard extends AppCompatActivity {
 
     ImageButton Dashboard_back;
-    Button Dashboard_RemoveTeacher, Dashboard_ContactUs;
+    Button Dashboard_ContactUs, Dashboard_PregeneratedTimetable;
 
     @SuppressLint({"MissingInflatedId", "WrongViewCast"})
     @Override
@@ -27,12 +27,22 @@ public class Dashboard extends AppCompatActivity {
 
         Dashboard_back = findViewById(R.id.Dashboard_back);
         Dashboard_ContactUs = findViewById(R.id.Dashboard_ContactUs);
+        Dashboard_PregeneratedTimetable = findViewById(R.id.Dashboard_PregeneratedTimetable);
+
 
         Dashboard_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent_homepage = new Intent(Dashboard.this, HomeActivity.class);
                 startActivity(intent_homepage);
+            }
+        });
+
+        Dashboard_PregeneratedTimetable.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent_pregenerated = new Intent(Dashboard.this, PregeneratedTimetables.class);
+                startActivity(intent_pregenerated);
             }
         });
 

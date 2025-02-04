@@ -1,0 +1,32 @@
+<!-- res/layout/item_pdf.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:layout_marginVertical="5dp"
+    android:gravity="center">
+
+    <ImageView
+        android:id="@+id/pdfimg"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@android:drawable/ic_menu_report_image"
+        app:tint="@color/red"
+        />
+
+    <TextView
+        android:id="@+id/pdfNameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Subject Name"
+        android:fontFamily="@font/teachers"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:textColor="@color/whale_blue"
+        android:layout_marginHorizontal="15dp"
+        />
+
+</LinearLayout>
