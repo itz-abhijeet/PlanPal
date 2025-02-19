@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_margin="10dp"
+    android:padding="10dp"
+    android:background="@color/white">
+
+    <!-- Subject Name -->
+    <TextView
+        android:id="@+id/txtSubject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Subject Name"
+        android:textSize="17sp"
+        android:fontFamily="@font/teachers"
+        android:textColor="@color/whale_blue"
+        android:background="@color/white"
+        android:padding="8dp" />
+
+    <!-- Teacher Selection Spinner -->
+    <Spinner
+        android:id="@+id/spinnerTeacher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="100dp"
+        android:minHeight="50dp"
+        android:padding="8dp"
+        android:gravity="center"
+        android:popupBackground="@drawable/textbox_background"
+        />
+</LinearLayout>

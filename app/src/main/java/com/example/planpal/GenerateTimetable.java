@@ -143,89 +143,6 @@ public class GenerateTimetable extends AppCompatActivity {
         }
     }
 
-
-
-//    private void generateTimetables() {
-//        clearTimetables();
-//        nameofInstitute.setVisibility(View.VISIBLE);
-//
-//        String[] days = {"MON", "TUE", "WED", "THU", "FRI", "SAT"};
-//        TableLayout[] timetables = {timetableTable1, timetableTable2, timetableTable3};
-//
-//        // Fetch subjects from the database
-//        List<String> allSubjects = fetchAllSubjects();
-//
-//        if (allSubjects.isEmpty()) {
-//            return; // No subjects in DB
-//        }
-//
-//        for (int i = 0; i < days.length; i++) { // Loop through days
-//            String day = days[i];
-//
-//            TableRow[] rows = new TableRow[timetables.length];
-//            List<HashSet<String>> slotTrackers = new ArrayList<>();
-//
-//            for (int slot = 0; slot < 6; slot++) {
-//                slotTrackers.add(new HashSet<>()); // Create a tracker for each slot
-//            }
-//
-//            for (int j = 0; j < timetables.length; j++) { // Loop through tables
-//                TableLayout table = timetables[j];
-//
-//                // Create a new row for this day
-//                TableRow row = new TableRow(this);
-//                row.setLayoutParams(new TableRow.LayoutParams(
-//                        TableRow.LayoutParams.MATCH_PARENT,
-//                        TableRow.LayoutParams.WRAP_CONTENT
-//                ));
-//
-//                // Create the first column with the day name
-//                if (j == 0) {
-//                    TextView dayCell = new TextView(this);
-//                    dayCell.setLayoutParams(new TableRow.LayoutParams(
-//                            0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f
-//                    ));
-//                    dayCell.setPadding(8, 8, 8, 8);
-//                    dayCell.setTextSize(16);
-//                    dayCell.setText(day);
-//                    dayCell.setTextColor(Color.BLACK);
-//                    row.addView(dayCell);
-//                }
-//
-//                // Shuffle a new subject list for each day
-//                List<String> dailySubjects = new ArrayList<>(allSubjects);
-//                Collections.shuffle(dailySubjects);
-//
-//                for (int slot = 0; slot < 6; slot++) {
-//                    TextView cell = new TextView(this);
-//                    cell.setLayoutParams(new TableRow.LayoutParams(
-//                            0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f
-//                    ));
-//                    cell.setPadding(8, 8, 8, 8);
-//                    cell.setTextSize(16);
-//
-//                    // Assign a subject
-//                    String subject = dailySubjects.get(slot % dailySubjects.size());
-//                    cell.setText(subject);
-//                    cell.setTextColor(Color.BLACK);
-//
-//                    // Check for overlap
-//                    if (!slotTrackers.get(slot).add(subject)) {
-//                        // If subject already exists in this slot, it's an overlap
-//                        cell.setBackgroundColor(Color.RED);
-//                    }
-//
-//                    row.addView(cell);
-//                }
-//
-//                table.addView(row);
-//                rows[j] = row;
-//            }
-//        }
-//    }
-
-
-
     private TableRow createHeaderRow() {
         TableRow headerRow = new TableRow(this);
         headerRow.setLayoutParams(new TableRow.LayoutParams(
@@ -275,16 +192,6 @@ public class GenerateTimetable extends AppCompatActivity {
 
     // ----------------PDF Saving
 
-
-//    private void sharePDF(Uri fileUri) {
-//        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-//        shareIntent.setType("application/pdf");
-//        shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);  // Add the PDF file URI
-//        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);  // Grant permission to apps to read the file
-//
-//        // Start the share intent to allow user to choose an app to share the file
-//        startActivity(Intent.createChooser(shareIntent, "Share Timetable PDF"));
-//    }
 
     private void sharePDF(Uri fileUri) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
@@ -398,27 +305,5 @@ public class GenerateTimetable extends AppCompatActivity {
     private void showToast(String message) {
         runOnUiThread(() -> Toast.makeText(this, message, Toast.LENGTH_SHORT).show());
     }
-
-
-
-//    // Helper function to get TableRow for a specific day
-//    private TableRow getRowForDay(String day) {
-//        for (int i = 0; i < timetableTable1.getChildCount(); i++) {
-//            View view = timetableTable1.getChildAt(i);
-//            if (view instanceof TableRow) {
-//                TableRow row = (TableRow) view;
-//                TextView firstCell = (TextView) row.getChildAt(0);
-//                if (firstCell.getText().toString().equals(day)) {
-//                    return row;
-//                }
-//            }
-//        }
-//        return null;
-//    }
-
-
-
-
-
 
 }

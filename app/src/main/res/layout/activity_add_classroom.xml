@@ -15,7 +15,6 @@
         android:background="@drawable/top_background"
         />
 
-
     <TextView
         android:id="@+id/addClassroom_title"
         android:layout_width="match_parent"

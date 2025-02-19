@@ -1,122 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_white"
-    tools:context=".AddTeacherSubject">
+    android:background="@color/light_grey"
+    android:padding="16dp">
 
-    <View
-        android:id="@+id/addTeacherSubject_bg"
+    <!-- Spinner to Select Class -->
+    <Spinner
+        android:id="@+id/spinnerClass"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:background="@drawable/top_background"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:popupBackground="@drawable/textbox_background"
+
         />
 
-
-    <TextView
-        android:id="@+id/addTeacherSubject_title"
+    <!-- Scrollable View for Subject-Teacher Selection -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Teacher - Subject"
-        android:textStyle="bold"
-        android:paddingHorizontal="35dp"
-        android:fontFamily="@font/teachers"
-        android:textColor="@color/white"
-        android:textSize="38sp"
-        android:layout_marginTop="80dp" />
-
-    <TextView
-        android:id="@+id/addTeacherSubject_titledes"
-        android:layout_below="@id/addTeacherSubject_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="PlanPal is and applicaion that allows you to generate college timetable."
-        android:paddingHorizontal="35dp"
-        android:fontFamily="@font/teachers"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:layout_marginTop="15dp"
-        />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/addTeacherSubject_InputSectionCard"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/addTeacherSubject_titledes"
-        android:layout_marginTop="30dp"
-        android:layout_marginHorizontal="30dp"
-        android:layout_marginBottom="30dp"
-        android:backgroundTint="#FFFFFF"
-        app:cardCornerRadius="30dp"
-        app:cardElevation="8dp"
-        >
+        android:layout_below="@id/spinnerClass"
+        android:fillViewport="true">
 
         <LinearLayout
-            android:id="@+id/addTeacherSubject_InputSection"
+            android:id="@+id/subjectContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingHorizontal="20dp"
-            android:paddingTop="50dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
 
-            <EditText
-                android:id="@+id/addTeacherSubject_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/textbox_background"
-                android:hint="Teacher's Email"
-                android:padding="15dp"
-                android:text=""
-                android:textColor="@color/black"
-                android:textColorHint="@color/black"
-                android:textSize="17sp"
-                android:fontFamily="@font/teachers"
-                android:inputType="textEmailAddress"
-                />
-
-            <EditText
-                android:id="@+id/addTeacherSubject_subjectCode"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/textbox_background"
-                android:hint="Subject Code"
-                android:padding="15dp"
-                android:text=""
-                android:textColor="@color/black"
-                android:textColorHint="@color/black"
-                android:textSize="17sp"
-                android:fontFamily="@font/teachers"
-                />
-
-            <Button
-                android:id="@+id/addTeacherSubject_Add"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="13dp"
-                android:backgroundTint="@color/whale_blue"
-                android:text="ADD TEACHER - SUBJECT"
-                android:textStyle="bold"
-                android:textSize="17sp"
-                android:layout_marginTop="15dp"
-                android:fontFamily="@font/teachers"
-                android:textColor="@color/white"
-                />
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <View
-        android:id="@+id/addTeacherSubject_foot"
+    <!-- Save Button -->
+    <Button
+        android:id="@+id/btnSave"
         android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:background="@color/whale_blue"
+        android:layout_height="wrap_content"
+        android:text="Save Selections"
+        android:fontFamily="@font/teachers"
+        android:textSize="17sp"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/whale_blue"
         android:layout_alignParentBottom="true"
         />
-
-
 </RelativeLayout>

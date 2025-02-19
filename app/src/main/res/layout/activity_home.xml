@@ -15,7 +15,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HomeActivity"
-    android:background="@color/light_grey"
+    android:background="@color/white"
     >
 
     <View
@@ -230,65 +230,65 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+<!--        <androidx.cardview.widget.CardView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_row="2"-->
+<!--            android:layout_column="0"-->
+<!--            android:layout_gravity="fill"-->
+<!--            android:layout_margin="8dp"-->
+<!--            app:cardCornerRadius="8dp"-->
+<!--            app:cardElevation="8dp"-->
+<!--            android:backgroundTint="@color/white"-->
+<!--            >-->
+<!--            <LinearLayout-->
+<!--                android:id="@+id/Home_subjectClassroom"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:orientation="vertical"-->
+<!--                android:gravity="center"-->
+<!--                android:layout_gravity="center_vertical|center_horizontal">-->
+<!--                <LinearLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="horizontal">-->
+
+<!--                    <ImageView-->
+<!--                        android:layout_width="50dp"-->
+<!--                        android:layout_height="70dp"-->
+<!--                        android:layout_marginVertical="15dp"-->
+<!--                        android:layout_marginLeft="15dp"-->
+<!--                        android:layout_marginRight="5dp"-->
+<!--                        android:src="@drawable/image_subject"-->
+<!--                        app:tint="@color/whale_blue"/>-->
+<!--                    <ImageView-->
+<!--                        android:layout_width="50dp"-->
+<!--                        android:layout_height="70dp"-->
+<!--                        android:layout_marginVertical="15dp"-->
+<!--                        android:layout_marginLeft="5dp"-->
+<!--                        android:layout_marginRight="15dp"-->
+<!--                        android:src="@drawable/vector_class"-->
+<!--                        app:tint="@color/whale_blue"/>-->
+
+<!--                </LinearLayout>-->
+<!--                <TextView-->
+<!--                    android:layout_width="150dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="Subject-Classroom"-->
+<!--                    android:textAlignment="center"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:textSize="17sp"-->
+<!--                    android:fontFamily="@font/teachers"-->
+<!--                    android:paddingBottom="10dp"-->
+<!--                    />-->
+<!--            </LinearLayout>-->
+<!--        </androidx.cardview.widget.CardView>-->
+
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="2"
             android:layout_column="0"
-            android:layout_gravity="fill"
-            android:layout_margin="8dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="8dp"
-            android:backgroundTint="@color/white"
-            >
-            <LinearLayout
-                android:id="@+id/Home_subjectClassroom"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:layout_gravity="center_vertical|center_horizontal">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="70dp"
-                        android:layout_marginVertical="15dp"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginRight="5dp"
-                        android:src="@drawable/image_subject"
-                        app:tint="@color/whale_blue"/>
-                    <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="70dp"
-                        android:layout_marginVertical="15dp"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginRight="15dp"
-                        android:src="@drawable/vector_class"
-                        app:tint="@color/whale_blue"/>
-
-                </LinearLayout>
-                <TextView
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:text="Subject-Classroom"
-                    android:textAlignment="center"
-                    android:textColor="@color/black"
-                    android:textSize="17sp"
-                    android:fontFamily="@font/teachers"
-                    android:paddingBottom="10dp"
-                    />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_row="2"
-            android:layout_column="1"
             android:layout_gravity="fill"
             android:layout_margin="8dp"
             app:cardCornerRadius="8dp"
@@ -324,8 +324,8 @@
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_row="3"
-            android:layout_column="0"
+            android:layout_row="2"
+            android:layout_column="1"
             android:layout_gravity="fill"
             android:layout_margin="8dp"
             app:cardCornerRadius="8dp"
@@ -358,15 +358,16 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_row="3"
-            android:layout_column="1"
+            android:layout_column="0"
             android:layout_gravity="fill"
             android:layout_margin="8dp"
             app:cardCornerRadius="8dp"
+            android:layout_columnSpan="2"
             app:cardElevation="8dp"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="#58AEFA"
             >
             <LinearLayout
                 android:id="@+id/Home_support"
@@ -380,13 +381,13 @@
                     android:layout_height="70dp"
                     android:layout_margin="15dp"
                     android:src="@drawable/image_support"
-                    app:tint="@color/whale_blue"/>
+                    app:tint="@color/white"/>
                 <TextView
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:text="Support"
                     android:textAlignment="center"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="17sp"
                     android:fontFamily="@font/teachers"
                     android:paddingBottom="10dp"/>

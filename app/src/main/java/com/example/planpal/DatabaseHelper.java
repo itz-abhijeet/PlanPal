@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "college.db";
     private static final int DATABASE_VERSION = 2; // Incremented version for changes
@@ -14,8 +17,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_TEACHER = "TeacherDB";
     public static final String TABLE_CLASSROOM = "ClassroomDB";
     public static final String TABLE_SUBJECT = "SubjectDB";
-    private static final String TABLE_TEACHER_SUBJECT = "TeacherSubjectDB";
-    private static final String TABLE_SUBJECT_CLASSROOM = "SubjectClassroomDB";
     private static final String TABLE_TIMETABLE = "TimetableDB";
 
 
@@ -34,15 +35,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String SUBJECT_CODE = "code";
     public static final String SUBJECT_NAME = "subject";
     private static final String SUBJECT_CREDITS = "credits";
-
-    // Columns for TeacherSubjectDB
-    private static final String TSD_TEACHER_EMAIL = "teacher_email";
-    private static final String TSD_SUBJECT_CODE = "subject_code";
-
-    // Columns for SubjectClassroomDB
-    private static final String SCD_ROOM_NO = "room_number";
-    private static final String SCD_YEAR = "year";
-    private static final String SCD_SUBJECT_CODE = "subject_code";
 
     // Columns for TimetableDB
     private static final String TIMETABLE_DAY = "day";
@@ -72,28 +64,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "UNIQUE(" + CLASSROOM_ROOM + ", " + CLASSROOM_YEAR + ", " +
                 CLASSROOM_COURSE + ", " + CLASSROOM_TYPE + "))");
 
+            String createTeacherSubjectTable = "CREATE TABLE IF NOT EXISTS TeacherSubjectDB (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "class TEXT, " +
+                    "subject TEXT, " +
+                    "teacher TEXT)";
+            db.execSQL(createTeacherSubjectTable);
+
+
         // Create SubjectDB table
         db.execSQL("CREATE TABLE " + TABLE_SUBJECT + " (" +
                 SUBJECT_CODE + " TEXT UNIQUE NOT NULL, " +
                 SUBJECT_NAME + " TEXT NOT NULL, " +
                 SUBJECT_CREDITS + " INTEGER NOT NULL)");
-
-        // Create TeacherSubjectDB table
-        db.execSQL("CREATE TABLE " + TABLE_TEACHER_SUBJECT + " (" +
-                TSD_TEACHER_EMAIL + " TEXT NOT NULL, " +
-                TSD_SUBJECT_CODE + " TEXT NOT NULL, " +
-                "PRIMARY KEY (" + TSD_TEACHER_EMAIL + ", " + TSD_SUBJECT_CODE + "), " +
-                "FOREIGN KEY(" + TSD_TEACHER_EMAIL + ") REFERENCES " + TABLE_TEACHER + "(" + TEACHER_EMAIL + "), " +
-                "FOREIGN KEY(" + TSD_SUBJECT_CODE + ") REFERENCES " + TABLE_SUBJECT + "(" + SUBJECT_CODE + "))");
-
-        // Create SubjectClassroomDB table
-        db.execSQL("CREATE TABLE " + TABLE_SUBJECT_CLASSROOM + " (" +
-                SCD_ROOM_NO + " TEXT NOT NULL, " +
-                SCD_YEAR + " TEXT NOT NULL, " +
-                SCD_SUBJECT_CODE + " TEXT NOT NULL, " +
-                "PRIMARY KEY (" + SCD_ROOM_NO + ", " + SCD_YEAR + ", " + SCD_SUBJECT_CODE + "), " +
-                "FOREIGN KEY(" + SCD_ROOM_NO + ", " + SCD_YEAR + ") REFERENCES " + TABLE_CLASSROOM + "(" + CLASSROOM_ROOM + ", " + CLASSROOM_YEAR + "), " +
-                "FOREIGN KEY(" + SCD_SUBJECT_CODE + ") REFERENCES " + TABLE_SUBJECT + "(" + SUBJECT_CODE + "))");
 
         db.execSQL("CREATE TABLE " + TABLE_TIMETABLE + " (" +
                 TIMETABLE_DAY + " TEXT NOT NULL, " +
@@ -108,8 +91,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEACHER_SUBJECT);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SUBJECT_CLASSROOM);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEACHER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CLASSROOM);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SUBJECT);
@@ -152,26 +133,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
-    // Add methods for TeacherSubjectDB
-    public boolean addTeacherSubject(String teacherEmail, String subjectCode) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(TSD_TEACHER_EMAIL, teacherEmail);
-        values.put(TSD_SUBJECT_CODE, subjectCode);
-        long result = db.insert(TABLE_TEACHER_SUBJECT, null, values);
-        return result != -1;
-    }
-
-    // Add methods for SubjectClassroomDB
-    public boolean addSubjectClassroom(String roomNo, String year, String subjectCode) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(SCD_ROOM_NO, roomNo);
-        values.put(SCD_YEAR, year);
-        values.put(SCD_SUBJECT_CODE, subjectCode);
-        long result = db.insert(TABLE_SUBJECT_CLASSROOM, null, values);
-        return result != -1;
-    }
 
     // ------------------------------------------ Remove Methods ------------------------------------------
 
@@ -185,14 +146,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public boolean removeSubject(String code) {
         return delete(TABLE_SUBJECT, SUBJECT_CODE + "=?", new String[]{code});
-    }
-
-    public boolean removeTeacherSubject(String teacherEmail, String subjectCode) {
-        return delete(TABLE_TEACHER_SUBJECT, TSD_TEACHER_EMAIL + "=? AND " + TSD_SUBJECT_CODE + "=?", new String[]{teacherEmail, subjectCode});
-    }
-
-    public boolean removeSubjectClassroom(String roomNo, String year, String subjectCode) {
-        return delete(TABLE_SUBJECT_CLASSROOM, SCD_ROOM_NO + "=? AND " + SCD_YEAR + "=? AND " + SCD_SUBJECT_CODE + "=?", new String[]{roomNo, year, subjectCode});
     }
 
     // Generalized deletion
@@ -219,14 +172,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor viewSubject(String code) {
         return query(TABLE_SUBJECT, null, SUBJECT_CODE + "=?", new String[]{code});
-    }
-
-    public Cursor viewTeacherSubject(String teacherEmail) {
-        return query(TABLE_TEACHER_SUBJECT, null, TSD_TEACHER_EMAIL + "=?", new String[]{teacherEmail});
-    }
-
-    public Cursor viewSubjectClassroom(String roomNo, String year) {
-        return query(TABLE_SUBJECT_CLASSROOM, null, SCD_ROOM_NO + "=? AND " + SCD_YEAR + "=?", new String[]{roomNo, year});
     }
 
     // Generalized query
@@ -265,26 +210,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result > 0;
     }
 
-    public boolean updateTeacherSubject(String teacherEmail, String oldSubjectCode, String newSubjectCode) {
-        ContentValues values = new ContentValues();
-        values.put(TSD_SUBJECT_CODE, newSubjectCode);
 
-        // Update the subject for the teacher with the old subject code
-        return update(TABLE_TEACHER_SUBJECT, values, TSD_TEACHER_EMAIL + "=? AND " + TSD_SUBJECT_CODE + "=?",
-                new String[]{teacherEmail, oldSubjectCode});
-    }
 
-    public boolean updateSubjectClassroom(String oldRoomNo, String oldYear, String oldSubjectCode,
-                                          String newRoomNo, String newYear, String newSubjectCode) {
-        ContentValues values = new ContentValues();
-        values.put(SCD_ROOM_NO, newRoomNo);
-        values.put(SCD_YEAR, newYear);
-        values.put(SCD_SUBJECT_CODE, newSubjectCode);
-
-        // Update the room and year for the subject
-        return update(TABLE_SUBJECT_CLASSROOM, values, SCD_ROOM_NO + "=? AND " + SCD_YEAR + "=? AND " + SCD_SUBJECT_CODE + "=?",
-                new String[]{oldRoomNo, oldYear, oldSubjectCode});
-    }
 
     // Add this method to DatabaseHelper
     public boolean addTimetableEntry(int dayIndex, int hour, String subjectCode, String roomNumber, String year) {
@@ -297,6 +224,62 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(TIMETABLE_YEAR, year);
         long result = db.insert(TABLE_TIMETABLE, null, values);
         return result != -1;
+    }
+
+
+    public Cursor viewTeacherAssignments(String className) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM TeacherSubjectDB WHERE class = ?", new String[]{className});
+    }
+
+
+    //Teacher-Subject Methods
+
+    public List<String> getAllSubjects() {
+        List<String> subjectList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT " + SUBJECT_NAME + " FROM " + TABLE_SUBJECT, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                subjectList.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return subjectList;
+    }
+
+    public List<String> getAllTeachers() {
+        List<String> teacherList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT " + TEACHER_NAME + " FROM " + TABLE_TEACHER, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                teacherList.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return teacherList;
+    }
+
+    public boolean assignTeacherToSubject(String className, String subject, String teacher) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("class", className);
+        values.put("subject", subject);
+        values.put("teacher", teacher);
+
+        long result = db.insertWithOnConflict("TeacherSubjectDB", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        return result != -1;
+    }
+
+
+    public void deleteTeacherAssignmentsForClass(String className) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("TeacherSubjectDB", "class = ?", new String[]{className});
     }
 
 

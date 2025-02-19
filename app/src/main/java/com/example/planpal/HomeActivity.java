@@ -31,7 +31,7 @@ public class HomeActivity extends AppCompatActivity {
         home_Teacher = findViewById(R.id.Home_Teacher);
         home_subject = findViewById(R.id.Home_subject);
         home_teacherSubject = findViewById(R.id.Home_teacherSubject);
-        home_subjectClassroom = findViewById(R.id.Home_subjectClassroom);
+//        home_subjectClassroom = findViewById(R.id.Home_subjectClassroom);
         home_generateTimetable = findViewById(R.id.Home_generateTimetable);
         home_dashboard = findViewById(R.id.Home_dashboard);
         home_support = findViewById(R.id.Home_support);
@@ -40,20 +40,20 @@ public class HomeActivity extends AppCompatActivity {
         home_Classroom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent_Classroom = new Intent(HomeActivity.this, Classroom.class);
-//                startActivity(intent_Classroom);
+                Intent intent_Classroom = new Intent(HomeActivity.this, Classroom.class);
+                startActivity(intent_Classroom);
 
-                Toast.makeText(getApplicationContext(), "Coming Soon", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Coming Soon", Toast.LENGTH_SHORT).show();
             }
         });
 
         home_Teacher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent_Teacher = new Intent(HomeActivity.this, Teacher.class);
-//                startActivity(intent_Teacher);
+                Intent intent_Teacher = new Intent(HomeActivity.this, Teacher.class);
+                startActivity(intent_Teacher);
 
-                Toast.makeText(getApplicationContext(), "Coming Soon", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Coming Soon", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -68,20 +68,21 @@ public class HomeActivity extends AppCompatActivity {
         home_teacherSubject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent_teacherSubject = new Intent(HomeActivity.this, TeacherSubject.class);
-//                startActivity(intent_teacherSubject);
-                Toast.makeText(getApplicationContext(), "Coming Soon", Toast.LENGTH_SHORT).show();
+                Intent intent_teacherSubject = new Intent(HomeActivity.this, TeacherSubject.class);
+                startActivity(intent_teacherSubject);
+
+//                Toast.makeText(getApplicationContext(), "Coming Soon", Toast.LENGTH_SHORT).show();
             }
         });
 
-        home_subjectClassroom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Intent intent_subjectClassroom = new Intent(HomeActivity.this, SubjectClassroom.class);
-//                startActivity(intent_subjectClassroom);
-                Toast.makeText(getApplicationContext(), "Coming Soon", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        home_subjectClassroom.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                Intent intent_subjectClassroom = new Intent(HomeActivity.this, SubjectClassroom.class);
+////                startActivity(intent_subjectClassroom);
+//                Toast.makeText(getApplicationContext(), "Coming Soon", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         home_generateTimetable.setOnClickListener(new View.OnClickListener() {
             @Override
