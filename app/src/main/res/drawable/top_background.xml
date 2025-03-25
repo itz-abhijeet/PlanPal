@@ -2,8 +2,10 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
 
     <corners
+
         android:bottomRightRadius="250dp"
         android:bottomLeftRadius="0dp"
+
         />
     <solid
         android:color="@color/whale_blue"

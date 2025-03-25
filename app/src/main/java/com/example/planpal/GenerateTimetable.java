@@ -1,15 +1,19 @@
 package com.example.planpal;
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -24,26 +28,43 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfWriter;
 
+import com.itextpdf.io.font.FontProgramFactory;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 import android.Manifest;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.layout.property.AreaBreakType;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.UnitValue;
 
 
 public class GenerateTimetable extends AppCompatActivity {
@@ -53,6 +74,7 @@ public class GenerateTimetable extends AppCompatActivity {
     private DatabaseHelper dbHelper;
     TextView nameofInstitute, c1, c2, c3;
     private File pdfFile;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +101,60 @@ public class GenerateTimetable extends AppCompatActivity {
         generateTimetableButton.setOnClickListener(v -> generateTimetables());
     }
 
+    private void clearTimetables() {
+        timetableTable1.removeAllViews();
+        timetableTable2.removeAllViews();
+        timetableTable3.removeAllViews();
+    }
+
+
+    private TableRow createHeaderRow() {
+        TableRow headerRow = new TableRow(this);
+        headerRow.setLayoutParams(new TableRow.LayoutParams(
+                TableRow.LayoutParams.MATCH_PARENT,
+                TableRow.LayoutParams.WRAP_CONTENT
+        ));
+
+        TextView emptyCell = new TextView(this);
+        emptyCell.setLayoutParams(new TableRow.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f
+        ));
+        emptyCell.setPadding(8, 8, 8, 8);
+        headerRow.addView(emptyCell); // Empty cell for alignment
+
+        for (int hour = 1; hour <= 6; hour++) {
+            TextView hourCell = new TextView(this);
+            hourCell.setLayoutParams(new TableRow.LayoutParams(
+                    0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f
+            ));
+            hourCell.setPadding(8, 8, 8, 8);
+            hourCell.setTextSize(16);
+            hourCell.setText("Lec " + hour);
+            hourCell.setTextColor(Color.BLACK);
+            hourCell.setTypeface(Typeface.DEFAULT_BOLD);
+            headerRow.addView(hourCell);
+        }
+        return headerRow;
+    }
+
+
+
+
+    private Map<String, String> fetchSubjectCodeToName() {
+        Map<String, String> subjectMap = new HashMap<>();
+        Cursor cursor = dbHelper.viewTable(DatabaseHelper.TABLE_SUBJECT);
+
+        while (cursor.moveToNext()) {
+            String subjectCode = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.SUBJECT_CODE));
+            String subjectName = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.SUBJECT_NAME));
+            subjectMap.put(subjectName, subjectCode);
+        }
+
+        cursor.close();
+        Log.d("DEBUG", "Subject Code to Name Map: " + subjectMap);
+        return subjectMap;
+    }
+
 
     private void generateTimetables() {
         clearTimetables();
@@ -91,17 +167,60 @@ public class GenerateTimetable extends AppCompatActivity {
         String[] days = {"MON", "TUE", "WED", "THU", "FRI", "SAT"};
         TableLayout[] timetables = {timetableTable1, timetableTable2, timetableTable3};
 
-        // Fetch subjects once and shuffle them
-        List<String> allSubjects = fetchAllSubjects();
+        // Fetch subject-teacher assignments (Stores subject codes)
+        Map<String, List<String>> subjectTeachers = fetchSubjectTeachers();
+        Log.d("DEBUG", "Fetched Subject-Teacher Assignments: " + subjectTeachers);
 
-        if (allSubjects.isEmpty()) {
-            Toast.makeText(this,"Subjects doesn't exists",Toast.LENGTH_SHORT).show();
-            return; // No subjects in DB
+        if (subjectTeachers.isEmpty()) {
+            Toast.makeText(this, "No teacher assignments found.", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        for (TableLayout table : timetables) {
-            TableRow headerRow = createHeaderRow();
-            table.addView(headerRow);
+        // Fetch subjects with credits (Stores subject names)
+        Map<String, Integer> subjectCredits = fetchSubjectsWithCredits();
+        Log.d("DEBUG", "Fetched Subject Credits: " + subjectCredits);
+
+        if (subjectCredits.isEmpty()) {
+            Toast.makeText(this, "Subjects don't exist.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Fetch subject name → subject code mapping
+        Map<String, String> subjectCodeMap = fetchSubjectCodeToName();
+        Log.d("DEBUG", "Subject Code Mapping: " + subjectCodeMap);
+
+        // Expand subject list based on credits (Convert subject names to codes)
+        List<String> expandedSubjects = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : subjectCredits.entrySet()) {
+            String subjectName = entry.getKey();
+            String subjectCode = subjectCodeMap.get(subjectName);
+
+            if (subjectCode != null && subjectTeachers.containsKey(subjectCode)) { // Check if the subject has teachers
+                for (int i = 0; i < entry.getValue(); i++) {
+                    expandedSubjects.add(subjectCode);
+                }
+            }
+        }
+
+        if (expandedSubjects.isEmpty()) {
+            Toast.makeText(this, "No valid subjects with assigned teachers.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Teacher schedule to track availability PER CLASS
+        Map<String, Map<String, Set<String>>> teacherSchedule = new HashMap<>();
+
+        // Global schedule to prevent a teacher from being assigned to multiple classes at the same time
+        Map<String, Set<String>> globalTeacherSchedule = new HashMap<>();
+
+        // Balancing data: Lecture and "No Teacher Assigned" counts per class
+        Map<String, Integer> classLectureCount = new HashMap<>();
+        Map<String, Integer> classNoTeacherCount = new HashMap<>();
+
+        for (int i = 0; i < timetables.length; i++) {
+            TableLayout table = timetables[i];
+            String className = "Class " + (i + 1);
+            table.addView(createHeaderRow());
 
             for (String day : days) {
                 TableRow row = new TableRow(this);
@@ -120,9 +239,8 @@ public class GenerateTimetable extends AppCompatActivity {
                 dayCell.setTextColor(Color.BLACK);
                 row.addView(dayCell);
 
-                // Shuffle a new subject list for each day to ensure variety
-                List<String> dailySubjects = new ArrayList<>(allSubjects);
-                Collections.shuffle(dailySubjects);
+                List<String> availableSubjects = new ArrayList<>(expandedSubjects);
+                Collections.shuffle(availableSubjects);
 
                 for (int hour = 0; hour < 6; hour++) {
                     TextView cell = new TextView(this);
@@ -132,65 +250,227 @@ public class GenerateTimetable extends AppCompatActivity {
                     cell.setPadding(8, 8, 8, 8);
                     cell.setTextSize(16);
 
-                    String subject = dailySubjects.get(hour % dailySubjects.size());
-                    cell.setText(subject);
-                    cell.setTextColor(Color.BLACK);
+                    if (availableSubjects.isEmpty()) {
+                        availableSubjects = new ArrayList<>(expandedSubjects);
+                        Collections.shuffle(availableSubjects);
+                    }
+
+                    String subjectCode = availableSubjects.remove(0);
+                    Log.d("DEBUG", "Assigning teacher for Subject Code: " + subjectCode + " on " + day + " hour " + hour);
+
+                    // Assign teacher per class while preventing conflicts across all classes
+                    String assignedTeacher = assignTeacher(className, subjectCode, subjectTeachers,
+                            teacherSchedule, globalTeacherSchedule,
+                            classLectureCount, classNoTeacherCount,
+                            day, hour);
+
+                    if (assignedTeacher == null) {
+                        String sN = dbHelper.getSubjectNameBySubjectCode(subjectCode);
+                        cell.setText(sN + "\n" + "No Teacher Avaiable");
+                        cell.setTextColor(Color.RED);
+                    } else {
+                        String sN = dbHelper.getSubjectNameBySubjectCode(subjectCode);
+                        String tN = dbHelper.getTeacherNameByTeacherMail(assignedTeacher);
+                        cell.setText(sN + "\n" + tN);
+                        cell.setTextColor(Color.BLACK);
+                    }
+
                     row.addView(cell);
                 }
 
                 table.addView(row);
             }
         }
+
+        Log.d("DEBUG", "Class Lecture Counts: " + classLectureCount);
+        Log.d("DEBUG", "Class No Teacher Counts: " + classNoTeacherCount);
     }
 
-    private TableRow createHeaderRow() {
-        TableRow headerRow = new TableRow(this);
-        headerRow.setLayoutParams(new TableRow.LayoutParams(
-                TableRow.LayoutParams.MATCH_PARENT,
-                TableRow.LayoutParams.WRAP_CONTENT
-        ));
 
-        TextView emptyCell = new TextView(this);
-        emptyCell.setLayoutParams(new TableRow.LayoutParams(
-                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f
-        ));
-        headerRow.addView(emptyCell);
 
-        for (int hour = 1; hour <= 6; hour++) {
-            TextView hourCell = new TextView(this);
-            hourCell.setLayoutParams(new TableRow.LayoutParams(
-                    0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f
-            ));
-            hourCell.setPadding(8, 8, 8, 8);
-            hourCell.setTextSize(16);
-            hourCell.setText(String.valueOf(hour));
-            hourCell.setTextColor(Color.BLACK);
-            headerRow.addView(hourCell);
+//    private String assignTeacher(String className, String subjectCode,
+//                                 Map<String, List<String>> subjectTeachers,
+//                                 Map<String, Map<String, Set<String>>> teacherSchedule,
+//                                 Map<String, Set<String>> globalTeacherSchedule,
+//                                 String day, int hour) {
+//
+//        // Get the list of teachers available for the subject
+//        List<String> teachers = subjectTeachers.get(subjectCode);
+//        if (teachers == null || teachers.isEmpty()) {
+//            Log.d("DEBUG", "No teachers available for Subject: " + subjectCode);
+//            return null; // No teachers are available for this subject
+//        }
+//
+//        String timeSlot = day + "-" + hour;
+//
+//        // Initialize schedules for the class and globally
+//        teacherSchedule.putIfAbsent(className, new HashMap<>());
+//        teacherSchedule.get(className).putIfAbsent(timeSlot, new HashSet<>());
+//        globalTeacherSchedule.putIfAbsent(timeSlot, new HashSet<>());
+//
+//        for (String teacher : teachers) {
+//            // Check if the teacher is assigned to the current class for this subject
+//            String assignedClass = dbHelper.getAssignedClassForTeacherAndSubject(teacher, subjectCode);
+//
+//            boolean isExplicitlyAssigned = className.equals(assignedClass);
+//
+//            // Check if the teacher is free and either explicitly assigned or available as fallback
+//            Set<String> assignedTeachersClass = teacherSchedule.get(className).get(timeSlot);
+//            Set<String> assignedTeachersGlobal = globalTeacherSchedule.get(timeSlot);
+//
+//            if (!assignedTeachersClass.contains(teacher) && !assignedTeachersGlobal.contains(teacher)) {
+//                if (isExplicitlyAssigned) {
+//                    // Strict assignment logic
+//                    assignedTeachersClass.add(teacher);
+//                    assignedTeachersGlobal.add(teacher);
+//                    Log.d("DEBUG", "Strictly Assigned Teacher: " + teacher + " to Subject: " + subjectCode + " in " + className + " at " + timeSlot);
+//                    return teacher;
+//                }
+//            }
+//        }
+//
+//        // Fallback logic: Allow assignment of any free teacher for the subject
+//        for (String teacher : teachers) {
+//            Set<String> assignedTeachersClass = teacherSchedule.get(className).get(timeSlot);
+//            Set<String> assignedTeachersGlobal = globalTeacherSchedule.get(timeSlot);
+//
+//            if (!assignedTeachersClass.contains(teacher) && !assignedTeachersGlobal.contains(teacher)) {
+//                assignedTeachersClass.add(teacher);
+//                assignedTeachersGlobal.add(teacher);
+//                Log.d("DEBUG", "Fallback Assigned Teacher: " + teacher + " to Subject: " + subjectCode + " in " + className + " at " + timeSlot);
+//                return teacher;
+//            }
+//        }
+//
+//        Log.d("DEBUG", "No teacher assigned for Subject: " + subjectCode + " in Class: " + className + " at " + timeSlot);
+//        return null; // No teacher available for this time slot
+//    }
+
+
+    private String assignTeacher(String className, String subjectCode,
+                                 Map<String, List<String>> subjectTeachers,
+                                 Map<String, Map<String, Set<String>>> teacherSchedule,
+                                 Map<String, Set<String>> globalTeacherSchedule,
+                                 Map<String, Integer> classLectureCount,
+                                 Map<String, Integer> classNoTeacherCount,
+                                 String day, int hour) {
+
+        // Get the list of teachers available for the subject
+        List<String> teachers = subjectTeachers.get(subjectCode);
+        if (teachers == null || teachers.isEmpty()) {
+            Log.d("DEBUG", "No teachers available for Subject: " + subjectCode);
+            // Increment the "No Teacher" counter for this class
+            classNoTeacherCount.put(className, classNoTeacherCount.getOrDefault(className, 0) + 1);
+            return null; // No teachers are available for this subject
         }
-        return headerRow;
+
+        String timeSlot = day + "-" + hour;
+
+        // Initialize schedules for the class and globally
+        teacherSchedule.putIfAbsent(className, new HashMap<>());
+        teacherSchedule.get(className).putIfAbsent(timeSlot, new HashSet<>());
+        globalTeacherSchedule.putIfAbsent(timeSlot, new HashSet<>());
+
+        for (String teacher : teachers) {
+            // Check if the teacher is assigned to the current class for this subject
+            String assignedClass = dbHelper.getAssignedClassForTeacherAndSubject(teacher, subjectCode);
+            boolean isExplicitlyAssigned = className.equals(assignedClass);
+
+            // Check if the teacher is free for the current slot
+            Set<String> assignedTeachersClass = teacherSchedule.get(className).get(timeSlot);
+            Set<String> assignedTeachersGlobal = globalTeacherSchedule.get(timeSlot);
+
+            if (!assignedTeachersClass.contains(teacher) && !assignedTeachersGlobal.contains(teacher)) {
+                if (isExplicitlyAssigned) {
+                    // Strictly assign teacher
+                    assignedTeachersClass.add(teacher);
+                    assignedTeachersGlobal.add(teacher);
+
+                    // Update lecture count for the class
+                    classLectureCount.put(className, classLectureCount.getOrDefault(className, 0) + 1);
+                    Log.d("DEBUG", "Strictly Assigned Teacher: " + teacher + " to Subject: " + subjectCode + " in " + className + " at " + timeSlot);
+                    return teacher;
+                }
+            }
+        }
+
+        // Fallback logic: Distribute teachers and lectures evenly
+        String selectedTeacher = null;
+        int minLectureCount = Integer.MAX_VALUE;
+
+        for (String teacher : teachers) {
+            Set<String> assignedTeachersClass = teacherSchedule.get(className).get(timeSlot);
+            Set<String> assignedTeachersGlobal = globalTeacherSchedule.get(timeSlot);
+
+            if (!assignedTeachersClass.contains(teacher) && !assignedTeachersGlobal.contains(teacher)) {
+                // Check lecture distribution across classes
+                int lectureCount = classLectureCount.getOrDefault(className, 0);
+
+                if (lectureCount < minLectureCount) {
+                    minLectureCount = lectureCount;
+                    selectedTeacher = teacher;
+                }
+            }
+        }
+
+        if (selectedTeacher != null) {
+            teacherSchedule.get(className).get(timeSlot).add(selectedTeacher);
+            globalTeacherSchedule.get(timeSlot).add(selectedTeacher);
+            classLectureCount.put(className, classLectureCount.getOrDefault(className, 0) + 1);
+
+            Log.d("DEBUG", "Balanced Assigned Teacher: " + selectedTeacher + " to Subject: " + subjectCode + " in " + className + " at " + timeSlot);
+            return selectedTeacher;
+        }
+
+        // If no teacher can be assigned, increment "No Teacher" counter
+        classNoTeacherCount.put(className, classNoTeacherCount.getOrDefault(className, 0) + 1);
+        Log.d("DEBUG", "No teacher assigned for Subject: " + subjectCode + " in Class: " + className + " at " + timeSlot);
+        return null;
     }
 
-    private List<String> fetchAllSubjects() {
-        List<String> subjects = new ArrayList<>();
+
+
+    /**
+     * Fetch subjects and their assigned teachers from TeacherSubjectDB
+     */
+    private Map<String, List<String>> fetchSubjectTeachers() {
+        Map<String, List<String>> subjectTeachers = new HashMap<>();
+        Cursor cursor = dbHelper.viewTable(DatabaseHelper.TABLE_TEACHER_SUBJECT);
+
+        while (cursor.moveToNext()) {
+            String subject = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.TEACHER_SUBJECT_SUBJECT_CODE));
+            String teacher = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.TEACHER_SUBJECT_TEACHER_EMAIL));
+
+            subjectTeachers.putIfAbsent(subject, new ArrayList<>());
+            subjectTeachers.get(subject).add(teacher);
+        }
+
+        cursor.close();
+        Log.d("DEBUG", "Fetched Subject-Teacher Assignments: " + subjectTeachers);
+        return subjectTeachers;
+    }
+
+    /**
+     * Fetch subjects with their credits
+     */
+    private Map<String, Integer> fetchSubjectsWithCredits() {
+        Map<String, Integer> subjects = new HashMap<>();
         Cursor subjectCursor = dbHelper.viewTable(DatabaseHelper.TABLE_SUBJECT);
 
         while (subjectCursor.moveToNext()) {
             String subjectName = subjectCursor.getString(subjectCursor.getColumnIndexOrThrow(DatabaseHelper.SUBJECT_NAME));
-            subjects.add(subjectName);
+            int credits = subjectCursor.getInt(subjectCursor.getColumnIndexOrThrow(DatabaseHelper.SUBJECT_CREDITS));
+            subjects.put(subjectName, credits);
         }
 
         subjectCursor.close();
+        Log.d("DEBUG", "Fetched Subject Credits: " + subjects);
         return subjects;
-    }
-
-    private void clearTimetables() {
-        timetableTable1.removeAllViews();
-        timetableTable2.removeAllViews();
-        timetableTable3.removeAllViews();
     }
 
 
     // ----------------PDF Saving
+
 
 
     private void sharePDF(Uri fileUri) {
@@ -201,109 +481,119 @@ public class GenerateTimetable extends AppCompatActivity {
         startActivity(Intent.createChooser(shareIntent, "Share Timetable PDF"));
     }
 
+
     private void generatePDF() {
-        // Check storage permission for Android 9 (API level 28) and below
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            // For older Android versions, check WRITE_EXTERNAL_STORAGE permission
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                return;
-            }
-        }
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Generating PDF...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
-        try {
+        new Thread(() -> {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault());
+                String currentDateAndTime = sdf.format(new Date());
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault());
-            String currentDateAndTime = sdf.format(new Date());
+                TableLayout[] timetables = {timetableTable1, timetableTable2, timetableTable3};
 
-            // Generate the file name with "PlanPal" and the current date and time
-            String fileName = "PlanPal_" + currentDateAndTime + ".pdf";
-            // For Android 10 and above, use MediaStore API to save in the Downloads folder
-            ContentValues values = new ContentValues();
-            values.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName); // File name
-            values.put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf");
-            values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+                String fileName = "PlanPal_" + currentDateAndTime + "_timetables.pdf";
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
+                values.put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf");
+                values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
 
-            // Get the content resolver and insert the new file in Downloads
-            //Uri uri = FileProvider.getUriForFile(this, "com.example.planpal.fileprovider", pdfFile);
-            Uri uri = getContentResolver().insert(MediaStore.Files.getContentUri("external"), values);
-
-            // Write to the OutputStream of the URI
-            OutputStream outputStream = getContentResolver().openOutputStream(uri);
-            PdfWriter writer = new PdfWriter(outputStream);
-            PdfDocument pdfDoc = new PdfDocument(writer);
-            Document document = new Document(pdfDoc);
-
-            // Add Title to PDF
-            document.add(new Paragraph("College Timetable").setBold().setFontSize(20));
-
-            // Array of TableLayouts for all 3 timetables
-            TableLayout[] timetables = {timetableTable1, timetableTable2, timetableTable3};
-
-            // Loop through each timetable (timetableTable1, timetableTable2, timetableTable3)
-            for (int tableIndex = 0; tableIndex < timetables.length; tableIndex++) {
-                TableLayout timetable = timetables[tableIndex];
-
-                // Add header for each timetable
-                document.add(new Paragraph("Timetable " + (tableIndex + 1)).setBold().setFontSize(16));
-
-                // Create table with 7 columns (Day + 6 Slots)
-                float[] columnWidths = {100, 80, 80, 80, 80, 80, 80};
-                Table table = new Table(columnWidths);
-
-                // Add header row
-                table.addCell(new Cell().add(new Paragraph("Day").setBold()));
-                for (int i = 1; i <= 6; i++) {
-                    table.addCell(new Cell().add(new Paragraph("Slot " + i).setBold()));
+                Uri uri = getContentResolver().insert(MediaStore.Files.getContentUri("external"), values);
+                if (uri == null) {
+                    runOnUiThread(() -> {
+                        progressDialog.dismiss();
+                        showToast("Error creating file URI for PDF");
+                    });
+                    return;
                 }
 
-                // Loop through each row of the timetable (representing a day)
-                for (int i = 0; i < timetable.getChildCount(); i++) {
-                    View view = timetable.getChildAt(i);
-                    if (view instanceof TableRow) {
-                        TableRow row = (TableRow) view;
+                OutputStream outputStream = getContentResolver().openOutputStream(uri);
+                if (outputStream == null) {
+                    runOnUiThread(() -> {
+                        progressDialog.dismiss();
+                        showToast("Error opening output stream for PDF");
+                    });
+                    return;
+                }
 
-                        // Add day name (first cell) to the PDF
-                        TextView dayCell = (TextView) row.getChildAt(0);
-                        table.addCell(new Cell().add(new Paragraph(dayCell.getText().toString())));
+                PdfWriter writer = new PdfWriter(outputStream);
+                PdfDocument pdfDoc = new PdfDocument(writer);
+                PageSize pageSize = PageSize.A4.rotate();
+                pdfDoc.setDefaultPageSize(pageSize);
+                Document document = new Document(pdfDoc, pageSize);
+                document.setMargins(0, 0, 0, 0);
 
-                        // Add the subjects for each slot
-                        for (int j = 1; j < row.getChildCount(); j++) {
-                            TextView cellView = (TextView) row.getChildAt(j);
-                            Cell pdfCell = new Cell().add(new Paragraph(cellView.getText().toString()));
+                for (int tableIndex = 0; tableIndex < timetables.length; tableIndex++) {
+                    document.add(new Paragraph("JSPM's\nJayawantrao Sawant Polytechnic\nEven/ Odd Semester")
+                            .setBold()
+                            .setFontSize(20)
+                            .setTextAlignment(TextAlignment.CENTER)
+                            .setHorizontalAlignment(HorizontalAlignment.CENTER));
 
-                            // Highlight overlaps in red
-                            if (cellView.getBackground() != null) {
-                                pdfCell.setBackgroundColor(ColorConstants.RED);
+                    float[] columnWidths = new float[7];
+                    for (int i = 0; i < columnWidths.length; i++) {
+                        columnWidths[i] = pageSize.getWidth() / 7f;
+                    }
+
+                    Table table = new Table(columnWidths);
+                    table.setHorizontalAlignment(HorizontalAlignment.CENTER);
+                    table.setWidth(pageSize.getWidth());
+
+                    table.addCell(new Cell().add(new Paragraph("Day").setBold()).setTextAlignment(TextAlignment.CENTER));
+                    String[] timeSlots = {"8:30 to 9:30", "9:30 to 10:30", "11:00 to 12:00", "12:00 to 1:00", "1:45 to 2:45", "2:45 to 3:45"};
+                    for (String timeSlot : timeSlots) {
+                        table.addCell(new Cell().add(new Paragraph(timeSlot).setBold()).setTextAlignment(TextAlignment.CENTER));
+                    }
+
+                    for (int i = 0; i < timetables[tableIndex].getChildCount(); i++) {
+                        View view = timetables[tableIndex].getChildAt(i);
+                        if (view instanceof TableRow) {
+                            TableRow row = (TableRow) view;
+                            TextView dayCell = (TextView) row.getChildAt(0);
+                            table.addCell(new Cell().add(new Paragraph(dayCell.getText().toString()).setTextAlignment(TextAlignment.CENTER)));
+                            for (int j = 1; j < row.getChildCount(); j++) {
+                                TextView cellView = (TextView) row.getChildAt(j);
+                                Cell pdfCell = new Cell().add(new Paragraph(cellView.getText().toString()).setTextAlignment(TextAlignment.CENTER));
+                                if (cellView.getBackground() != null) {
+                                    pdfCell.setBackgroundColor(ColorConstants.RED);
+                                }
+                                table.addCell(pdfCell);
                             }
-                            table.addCell(pdfCell);
                         }
+                    }
+                    document.add(table);
+
+                    if (tableIndex < timetables.length - 1) {
+                        document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
                     }
                 }
 
-                // Add the table to the PDF document
-                document.add(table);
+                document.close();
+                pdfDoc.close();
+                writer.close();
+
+                runOnUiThread(() -> {
+                    progressDialog.dismiss();
+                    sharePDF(uri);
+                    showToast("PDF saved in Downloads.");
+                });
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                runOnUiThread(() -> {
+                    progressDialog.dismiss();
+                    showToast("Error generating PDF!");
+                });
             }
-
-            // Close the document after writing all tables
-            document.close();
-
-            // Call share functionality after generating the PDF
-            sharePDF(uri);
-
-            showToast("PDF saved in Downloads: " + uri.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-            showToast("Error generating PDF!");
-        }
+        }).start();
     }
 
 
-    // Helper function to show toast messages
     private void showToast(String message) {
-        runOnUiThread(() -> Toast.makeText(this, message, Toast.LENGTH_SHORT).show());
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
 }

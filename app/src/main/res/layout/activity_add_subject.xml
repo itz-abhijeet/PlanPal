@@ -107,6 +107,13 @@
                 android:fontFamily="@font/teachers"
                 />
 
+            <CheckBox
+                android:id="@+id/addSubject_checkboxLab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Has Lab?" />
+
+
             <Button
                 android:id="@+id/addSubject_Add"
                 android:layout_width="match_parent"

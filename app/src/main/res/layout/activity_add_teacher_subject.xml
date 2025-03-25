@@ -1,45 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_grey"
-    android:padding="16dp">
+    android:background="@color/bg_white">
 
-    <!-- Spinner to Select Class -->
-    <Spinner
-        android:id="@+id/spinnerClass"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:gravity="center"
-        android:popupBackground="@drawable/textbox_background"
-
-        />
-
-    <!-- Scrollable View for Subject-Teacher Selection -->
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/spinnerClass"
-        android:fillViewport="true">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <LinearLayout
-            android:id="@+id/subjectContainer"
+        <TextView
+            android:id="@+id/RemoveClassroom_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </ScrollView>
+            android:textStyle="bold"
+            android:textSize="30dp"
+            android:fontFamily="@font/teachers"
+            android:text="Add Teacher - Subject"
+            android:textAlignment="center"
+            android:textColor="@color/whale_blue"
+            android:layout_marginVertical="50dp"
+            />
 
-    <!-- Save Button -->
-    <Button
-        android:id="@+id/btnSave"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Save Selections"
-        android:fontFamily="@font/teachers"
-        android:textSize="17sp"
-        android:textColor="@color/white"
-        android:backgroundTint="@color/whale_blue"
-        android:layout_alignParentBottom="true"
-        />
-</RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/whale_blue"
+            android:fontFamily="@font/teachers"
+            android:text="Class 1"
+            android:layout_marginVertical="10dp"
+            android:layout_gravity="center"
+            android:textSize="20sp"/>
+
+        <LinearLayout android:id="@+id/layoutClass1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/whale_blue"
+            android:fontFamily="@font/teachers"
+            android:text="Class 2"
+            android:layout_gravity="center"
+            android:layout_marginVertical="10dp"
+            android:textSize="20sp"/>
+
+        <LinearLayout android:id="@+id/layoutClass2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/whale_blue"
+            android:fontFamily="@font/teachers"
+            android:layout_gravity="center"
+            android:layout_marginVertical="10dp"
+            android:text="Class 3"
+            android:textSize="20sp"/>
+
+        <LinearLayout android:id="@+id/layoutClass3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+
+        <Button android:id="@+id/btnSave"
+            android:text="Save Assignments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/whale_blue"
+            android:textColor="@color/white"
+            android:fontFamily="@font/teachers"
+            android:textSize="18sp"
+            android:layout_margin="20dp"
+            android:layout_gravity="right" />
+    </LinearLayout>
+</ScrollView>

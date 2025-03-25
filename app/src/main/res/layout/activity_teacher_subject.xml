@@ -46,16 +46,16 @@
             android:backgroundTint="@color/white"
             />
 
-        <Button
-            android:id="@+id/teacherSubject_RemoveteacherSubject"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:text="Remove Teacher-Subject"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:fontFamily="@font/teachers"
-            android:backgroundTint="@color/white"
-            />
+<!--        <Button-->
+<!--            android:id="@+id/teacherSubject_RemoveteacherSubject"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="80dp"-->
+<!--            android:text="Remove Teacher-Subject"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="20sp"-->
+<!--            android:fontFamily="@font/teachers"-->
+<!--            android:backgroundTint="@color/white"-->
+<!--            />-->
 
         <Button
             android:id="@+id/teacherSubject_ViewteacherSubject"

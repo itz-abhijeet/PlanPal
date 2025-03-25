@@ -16,7 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 public class Dashboard extends AppCompatActivity {
 
     ImageButton Dashboard_back;
-    Button Dashboard_ContactUs, Dashboard_PregeneratedTimetable;
+    Button Dashboard_ContactUs, Dashboard_PregeneratedTimetable, Dashboard_Faq;
 
     @SuppressLint({"MissingInflatedId", "WrongViewCast"})
     @Override
@@ -27,7 +27,8 @@ public class Dashboard extends AppCompatActivity {
 
         Dashboard_back = findViewById(R.id.Dashboard_back);
         Dashboard_ContactUs = findViewById(R.id.Dashboard_ContactUs);
-        Dashboard_PregeneratedTimetable = findViewById(R.id.Dashboard_PregeneratedTimetable);
+//        Dashboard_PregeneratedTimetable = findViewById(R.id.Dashboard_PregeneratedTimetable);
+        Dashboard_Faq = findViewById(R.id.Dashboard_Faq);
 
 
         Dashboard_back.setOnClickListener(new View.OnClickListener() {
@@ -38,13 +39,13 @@ public class Dashboard extends AppCompatActivity {
             }
         });
 
-        Dashboard_PregeneratedTimetable.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent_pregenerated = new Intent(Dashboard.this, PregeneratedTimetables.class);
-                startActivity(intent_pregenerated);
-            }
-        });
+//        Dashboard_PregeneratedTimetable.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent_pregenerated = new Intent(Dashboard.this, PregeneratedTimetables.class);
+//                startActivity(intent_pregenerated);
+//            }
+//        });
 
         Dashboard_ContactUs.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,6 +55,13 @@ public class Dashboard extends AppCompatActivity {
             }
         });
 
+        Dashboard_Faq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Dashboard.this, FAQ.class);
+                startActivity(intent);
+            }
+        });
 
     }
 }

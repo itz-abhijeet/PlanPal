@@ -16,7 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class HomeActivity extends AppCompatActivity {
 
-    LinearLayout home_generateTimetable, home_Teacher, home_Classroom, home_subject, home_teacherSubject, home_subjectClassroom, home_support, home_dashboard;
+    LinearLayout home_generateTimetable, home_Teacher, home_Classroom, home_subject, home_teacherSubject, home_support, home_dashboard;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -27,25 +27,24 @@ public class HomeActivity extends AppCompatActivity {
 
         // Initialize views
 
-        home_Classroom = findViewById(R.id.Home_Classroom);
+//        home_Classroom = findViewById(R.id.Home_Classroom);
         home_Teacher = findViewById(R.id.Home_Teacher);
         home_subject = findViewById(R.id.Home_subject);
         home_teacherSubject = findViewById(R.id.Home_teacherSubject);
-//        home_subjectClassroom = findViewById(R.id.Home_subjectClassroom);
         home_generateTimetable = findViewById(R.id.Home_generateTimetable);
         home_dashboard = findViewById(R.id.Home_dashboard);
         home_support = findViewById(R.id.Home_support);
 
 
-        home_Classroom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent_Classroom = new Intent(HomeActivity.this, Classroom.class);
-                startActivity(intent_Classroom);
-
+//        home_Classroom.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                Intent intent_Classroom = new Intent(HomeActivity.this, Classroom.class);
+////                startActivity(intent_Classroom);
+//
 //                Toast.makeText(getApplicationContext(), "Coming Soon", Toast.LENGTH_SHORT).show();
-            }
-        });
+//            }
+//        });
 
         home_Teacher.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +94,7 @@ public class HomeActivity extends AppCompatActivity {
         home_dashboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent_dashboard = new Intent(HomeActivity.this, Dashboard.class);
+                Intent intent_dashboard = new Intent(HomeActivity.this, PregeneratedTimetables.class);
                 startActivity(intent_dashboard);
             }
         });
@@ -103,7 +102,7 @@ public class HomeActivity extends AppCompatActivity {
         home_support.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent_support = new Intent(HomeActivity.this, ContactUs.class);
+                Intent intent_support = new Intent(HomeActivity.this, Dashboard.class);
                 startActivity(intent_support);
             }
         });

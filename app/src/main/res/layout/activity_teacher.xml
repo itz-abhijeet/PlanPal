@@ -49,23 +49,23 @@
             android:id="@+id/Teacher_RemoveTeacher"
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:text="Remove Teacher"
+            android:text="View/ Remove Teacher"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:fontFamily="@font/teachers"
             android:backgroundTint="@color/white"
             />
 
-        <Button
-            android:id="@+id/Teacher_ViewTeacher"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:text="View Teacher"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:fontFamily="@font/teachers"
-            android:backgroundTint="@color/white"
-            />
+<!--        <Button-->
+<!--            android:id="@+id/Teacher_ViewTeacher"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="80dp"-->
+<!--            android:text="View Teacher"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="20sp"-->
+<!--            android:fontFamily="@font/teachers"-->
+<!--            android:backgroundTint="@color/white"-->
+<!--            />-->
 
     </LinearLayout>
 

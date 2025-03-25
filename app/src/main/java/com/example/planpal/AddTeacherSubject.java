@@ -2,8 +2,9 @@ package com.example.planpal;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -11,29 +12,23 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class AddTeacherSubject extends AppCompatActivity {
-
-    private Spinner spinnerClass;
-    private LinearLayout subjectContainer;
-    private Button btnSave;
-
-    private DatabaseHelper dbHelper;
+    private DatabaseHelper db;
+    private LinearLayout layoutClass1, layoutClass2, layoutClass3;
     private List<String> subjects;
     private List<String> teachers;
-    private Map<String, String> selectedTeachers; // Mapping of subject -> selected teacher
+    private Map<String, Spinner> selectedTeachersMap = new HashMap<>(); // Stores dropdown selections
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,98 +36,98 @@ public class AddTeacherSubject extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_add_teacher_subject);
 
-        // Initialize Views
-        spinnerClass = findViewById(R.id.spinnerClass);
-        subjectContainer = findViewById(R.id.subjectContainer);
-        btnSave = findViewById(R.id.btnSave);
+        db = new DatabaseHelper(this);
+        layoutClass1 = findViewById(R.id.layoutClass1);
+        layoutClass2 = findViewById(R.id.layoutClass2);
+        layoutClass3 = findViewById(R.id.layoutClass3);
+        Button btnSave = findViewById(R.id.btnSave);
 
-        // Initialize Database Helper
-        dbHelper = new DatabaseHelper(this);
+        subjects = getSubjectsFromDB();
+        teachers = getTeachersFromDB();
 
-        // Load Classes into Spinner
-        loadClasses();
+        createDropdowns(layoutClass1, "Class 1");
+        createDropdowns(layoutClass2, "Class 2");
+        createDropdowns(layoutClass3, "Class 3");
 
-        // Handle Class Selection
-        spinnerClass.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                loadSubjects();
-            }
+        btnSave.setOnClickListener(v -> saveAssignments());
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
-        // Save Button Click Listener
-        btnSave.setOnClickListener(v -> saveTeacherSelections());
+        db.logTeacherSubjectDB();
     }
 
-    // Load classes into spinner
-    private void loadClasses() {
-        List<String> classes = new ArrayList<>();
-        classes.add("Class 1");
-        classes.add("Class 2");
-        classes.add("Class 3");
-
-//        ArrayAdapter<String> classAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, classes);
-        ArrayAdapter<String> classAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, classes) {
-            @Override
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                CheckedTextView textView = (CheckedTextView) view;
-                textView.setTextColor(getResources().getColor(R.color.black));
-
-                //holder.txtSubject.setTextColor(ContextCompat.getColor(context, R.color.black));
-                return view;
-            }
-
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                CheckedTextView textView = (CheckedTextView) view;
-                textView.setTextColor(getResources().getColor(R.color.black));
-                return view;
-            }
-        };
-        spinnerClass.setAdapter(classAdapter);
+    private List<String> getSubjectsFromDB() {
+        List<String> subjectList = new ArrayList<>();
+        Cursor cursor = db.viewTable(DatabaseHelper.TABLE_SUBJECT);
+        if (cursor.moveToFirst()) {
+            do {
+                subjectList.add(cursor.getString(1)); // Get subject name
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return subjectList;
     }
 
-    // Load subjects dynamically based on selected class
-    private void loadSubjects() {
-        subjectContainer.removeAllViews(); // Clear previous entries
+    private List<String> getTeachersFromDB() {
+        return db.getAllTeachers();
+    }
 
-        subjects = dbHelper.getAllSubjects();
-        teachers = dbHelper.getAllTeachers();
-        selectedTeachers = new HashMap<>();
+//    private void createDropdowns(LinearLayout layout, String className) {
+//        for (String subject : subjects) {
+//            TextView textView = new TextView(this);
+//            textView.setText(subject);
+//            textView.setTextSize(18);
+//            textView.setTextColor(Color.BLACK);
+//
+//            Spinner spinner = new Spinner(this);
+////            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, teachers);
+//
+//            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, teachers) {
+//                @Override
+//                public View getDropDownView(int position, View convertView, ViewGroup parent) {
+//                    View view = super.getDropDownView(position, convertView, parent);
+//                    CheckedTextView textView = (CheckedTextView) view;
+//                    textView.setTextColor(getResources().getColor(R.color.black));
+//                    textView.setBackgroundColor(Color.WHITE);
+//                    return view;
+//                }
+//
+//                @Override
+//                public View getView(int position, View convertView, ViewGroup parent) {
+//                    View view = super.getView(position, convertView, parent);
+//                    CheckedTextView textView = (CheckedTextView) view;
+//                    textView.setTextColor(getResources().getColor(R.color.black));
+//                    textView.setBackgroundColor(Color.TRANSPARENT);
+//                    return view;
+//                }
+//            };
+//            spinner.setAdapter(adapter);
+//
+//
+//            selectedTeachersMap.put(className + "_" + subject, spinner); // Store for retrieval
+//
+//            layout.addView(textView);
+//            layout.addView(spinner);
+//        }
+//    }
 
+    private void createDropdowns(LinearLayout layout, String className) {
         for (String subject : subjects) {
-            // Create Layout for Each Subject
-            LinearLayout layout = new LinearLayout(this);
-            layout.setOrientation(LinearLayout.HORIZONTAL);
+            TextView textView = new TextView(this);
+            textView.setText(subject);
+            textView.setTextSize(18);
+            textView.setTextColor(Color.BLACK);
 
-            // Subject Name
-            TextView subjectText = new TextView(this);
-            subjectText.setText(subject);
-            subjectText.setPadding(16, 16, 16, 16);
-            subjectText.setTextColor(getResources().getColor(R.color.black));
-            layout.addView(subjectText);
+            Spinner spinner = new Spinner(this);
 
-            // Teacher Selection Spinner
-            Spinner teacherSpinner = new Spinner(this);
-//            ArrayAdapter<String> teacherAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, teachers);
-//            teacherAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//            teacherSpinner.setAdapter(teacherAdapter);
+            // Fetch the pre-assigned teacher for the subject and class
+            String preAssignedTeacher = getAssignedTeacher(className, subject);
 
-            ArrayAdapter<String> teacherAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, teachers) {
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, teachers) {
                 @Override
                 public View getDropDownView(int position, View convertView, ViewGroup parent) {
                     View view = super.getDropDownView(position, convertView, parent);
                     CheckedTextView textView = (CheckedTextView) view;
                     textView.setTextColor(getResources().getColor(R.color.black));
-//                    textView.setBackground(new ColorDrawable(ContextCompat.getColor(context, R.color.black)));
-                    textView.setBackgroundColor(getResources().getColor(R.color.white));
-                    //holder.txtSubject.setTextColor(ContextCompat.getColor(context, R.color.black));
+                    textView.setBackgroundColor(Color.WHITE);
                     return view;
                 }
 
@@ -141,50 +136,157 @@ public class AddTeacherSubject extends AppCompatActivity {
                     View view = super.getView(position, convertView, parent);
                     CheckedTextView textView = (CheckedTextView) view;
                     textView.setTextColor(getResources().getColor(R.color.black));
+                    textView.setBackgroundColor(Color.TRANSPARENT);
                     return view;
                 }
             };
+            spinner.setAdapter(adapter);
 
-            teacherSpinner.setAdapter(teacherAdapter);
-
-            layout.addView(teacherSpinner);
-
-            // Handle Teacher Selection
-            teacherSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                    selectedTeachers.put(subject, teachers.get(pos)); // Store teacher selection for subject
+            // Set the pre-assigned teacher as the selected item
+            if (preAssignedTeacher != null) {
+                int position = teachers.indexOf(preAssignedTeacher);
+                if (position >= 0) {
+                    spinner.setSelection(position);
                 }
+            }
 
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            });
+            selectedTeachersMap.put(className + "_" + subject, spinner); // Store for retrieval
 
-            // Add Layout to Container
-            subjectContainer.addView(layout);
+            layout.addView(textView);
+            layout.addView(spinner);
         }
     }
 
-    // Save Teacher Selections to Database (Modify This as Needed)
-    private void saveTeacherSelections() {
-        String selectedClass = spinnerClass.getSelectedItem().toString(); // Get selected class
+    private String getAssignedTeacher(String className, String subjectName) {
+        SQLiteDatabase database = db.getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT " + DatabaseHelper.TEACHER_SUBJECT_TEACHER +
+                " FROM " + DatabaseHelper.TABLE_TEACHER_SUBJECT +
+                " WHERE " + DatabaseHelper.TEACHER_SUBJECT_CLASS + "=? AND " +
+                DatabaseHelper.TEACHER_SUBJECT_SUBJECT + "=?", new String[]{className, subjectName});
 
-        // Step 1: Delete old data
-        dbHelper.deleteTeacherAssignmentsForClass(selectedClass);
-
-        // Step 2: Insert new subject-teacher mapping
-        for (Map.Entry<String, String> entry : selectedTeachers.entrySet()) {
-            String subject = entry.getKey();
-            String teacher = entry.getValue();
-
-            boolean success = dbHelper.assignTeacherToSubject(selectedClass, subject, teacher);
-            if (success) {
-                System.out.println("Saved: " + selectedClass + " -> " + subject + " -> " + teacher);
-            } else {
-                System.out.println("Failed to save: " + selectedClass + " -> " + subject + " -> " + teacher);
-            }
+        if (cursor.moveToFirst()) {
+            String teacherName = cursor.getString(0);
+            cursor.close();
+            return teacherName;
         }
+
+        cursor.close();
+        return null; // No pre-assigned teacher
+    }
+
+
+
+//    private void saveAssignments() {
+//        // Step 1: Delete old assignments for all 3 classes
+//        db.deleteTeacherAssignmentsForClass("Class 1");
+//        db.deleteTeacherAssignmentsForClass("Class 2");
+//        db.deleteTeacherAssignmentsForClass("Class 3");
+//
+//        // Step 2: Insert new assignments
+//        for (Map.Entry<String, Spinner> entry : selectedTeachersMap.entrySet()) {
+//            String key = entry.getKey(); // Example: "Class 1_Subject X"
+//            String[] parts = key.split("_");
+//
+//            if (parts.length < 2) {
+//                Log.e("SAVE_ASSIGNMENTS", "Invalid key format: " + key);
+//                continue;
+//            }
+//
+//            String className = parts[0];  // "Class 1", "Class 2", etc.
+//            String subject = parts[1];    // "Math", "Physics", etc.
+//            String teacher = entry.getValue().getSelectedItem() != null ? entry.getValue().getSelectedItem().toString() : "";
+//
+//            if (teacher.isEmpty()) {
+//                Log.d("SAVE_ASSIGNMENTS", "Skipping empty teacher for " + className + " - " + subject);
+//                continue; // Skip if no teacher is selected
+//            }
+//
+//            Log.d("SAVE_ASSIGNMENTS", "Assigning: Class=" + className + ", Subject=" + subject + ", Teacher=" + teacher);
+//
+//            db.assignTeacherToSubject(className, subject, teacher);
+//        }
+//
+//        Toast.makeText(this, "Assignments updated!", Toast.LENGTH_SHORT).show();
+//    }
+
+    private void saveAssignments() {
+        // Step 1: Delete old assignments for all 3 classes
+        db.deleteTeacherAssignmentsForClass("Class 1");
+        db.deleteTeacherAssignmentsForClass("Class 2");
+        db.deleteTeacherAssignmentsForClass("Class 3");
+
+        // Step 2: Insert new assignments
+        for (Map.Entry<String, Spinner> entry : selectedTeachersMap.entrySet()) {
+            String key = entry.getKey(); // Example: "Class 1_Subject X"
+            String[] parts = key.split("_");
+
+            if (parts.length < 2) {
+                Log.e("SAVE_ASSIGNMENTS", "Invalid key format: " + key);
+                continue;
+            }
+
+            String className = parts[0];  // "Class 1", "Class 2", etc.
+            String subject = parts[1];    // "Math", "Physics", etc.
+            String teacher = entry.getValue().getSelectedItem() != null ? entry.getValue().getSelectedItem().toString() : "";
+
+            if (teacher.isEmpty()) {
+                Log.d("SAVE_ASSIGNMENTS", "Skipping empty teacher for " + className + " - " + subject);
+                continue; // Skip if no teacher is selected
+            }
+
+            // Fetch subject code from the database
+            String subjectCode = getSubjectCode(subject);
+            if (subjectCode == null) {
+                Log.e("SAVE_ASSIGNMENTS", "No subject code found for " + subject);
+                continue;
+            }
+
+            // Fetch teacher email from the database
+            String teacherEmail = getTeacherEmail(teacher);
+            if (teacherEmail == null) {
+                Log.e("SAVE_ASSIGNMENTS", "No email found for teacher " + teacher);
+                continue;
+            }
+
+            Log.d("SAVE_ASSIGNMENTS", "Assigning: Class=" + className + ", Subject=" + subject +
+                    ", Subject Code=" + subjectCode + ", Teacher=" + teacher + ", Teacher Email=" + teacherEmail);
+
+            db.assignTeacherToSubject(className, subject, teacher, subjectCode, teacherEmail);
+        }
+
+        Toast.makeText(this, "Assignments updated!", Toast.LENGTH_SHORT).show();
+    }
+
+    private String getSubjectCode(String subjectName) {
+        SQLiteDatabase database = db.getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT " + DatabaseHelper.SUBJECT_CODE +
+                " FROM " + DatabaseHelper.TABLE_SUBJECT +
+                " WHERE " + DatabaseHelper.SUBJECT_NAME + "=?", new String[]{subjectName});
+
+        if (cursor.moveToFirst()) {
+            String code = cursor.getString(0);
+            cursor.close();
+            return code;
+        }
+
+        cursor.close();
+        return null; // Not found
+    }
+
+    private String getTeacherEmail(String teacherName) {
+        SQLiteDatabase database = db.getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT " + DatabaseHelper.TEACHER_EMAIL +
+                " FROM " + DatabaseHelper.TABLE_TEACHER +
+                " WHERE " + DatabaseHelper.TEACHER_NAME + "=?", new String[]{teacherName});
+
+        if (cursor.moveToFirst()) {
+            String email = cursor.getString(0);
+            cursor.close();
+            return email;
+        }
+
+        cursor.close();
+        return null; // Not found
     }
 
 

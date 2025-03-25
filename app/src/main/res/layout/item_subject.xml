@@ -25,13 +25,24 @@
             android:textSize="17sp"
             android:textStyle="bold"
             android:textColor="@color/whale_blue"
+            android:layout_marginBottom="2dp"
             />
 
         <TextView
             android:id="@+id/subjectCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SUB001"
+            android:text="Subject Code: "
+            android:textSize="15sp"
+            android:fontFamily="@font/teachers"
+            android:textColor="@color/whale_blue"
+            />
+
+        <TextView
+            android:id="@+id/subjectCredits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Number Of Slots: "
             android:textSize="15sp"
             android:fontFamily="@font/teachers"
             android:textColor="@color/whale_blue"
@@ -44,6 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Remove"
+        android:layout_gravity="center"
         android:backgroundTint="@color/red"
         android:textColor="@color/white"
         />

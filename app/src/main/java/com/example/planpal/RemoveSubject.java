@@ -51,10 +51,26 @@ public class RemoveSubject extends AppCompatActivity {
             do {
                 String code = cursor.getString(cursor.getColumnIndexOrThrow("code"));
                 String name = cursor.getString(cursor.getColumnIndexOrThrow("subject"));
-                subjectList.add(new Subject(code, name));
+                int credits = cursor.getInt(cursor.getColumnIndexOrThrow("credits")); // Fetch credits
+                subjectList.add(new Subject(code, name, credits)); // Update Subject constructor
             } while (cursor.moveToNext());
         }
+        cursor.close(); // Close cursor to prevent memory leak
     }
+
+
+//    private void loadSubjects() {
+//        Cursor cursor = dbHelper.viewTable("SubjectDB");
+//        subjectList = new ArrayList<>();
+//
+//        if (cursor.moveToFirst()) {
+//            do {
+//                String code = cursor.getString(cursor.getColumnIndexOrThrow("code"));
+//                String name = cursor.getString(cursor.getColumnIndexOrThrow("subject"));
+//                subjectList.add(new Subject(code, name));
+//            } while (cursor.moveToNext());
+//        }
+//    }
 
     private void showConfirmationDialog(Button button) {
         int position = recyclerView.getChildAdapterPosition((View) button.getParent());

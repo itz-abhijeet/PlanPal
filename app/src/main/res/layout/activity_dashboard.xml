@@ -27,7 +27,7 @@
         android:id="@+id/Dashboard_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Dashboard"
+        android:text="Support"
         android:textStyle="bold"
         android:paddingHorizontal="35dp"
         android:fontFamily="@font/teachers"
@@ -56,38 +56,25 @@
             android:layout_marginHorizontal="40dp"
             >
 
-            <TextView
-                android:id="@+id/Dashboard_desc"
-                android:layout_width="wrap_content"
+<!--            <TextView-->
+<!--                android:id="@+id/Dashboard_desc"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Options"-->
+<!--                android:textStyle="bold"-->
+<!--                android:fontFamily="@font/teachers"-->
+<!--                android:textColor="#CC303349"-->
+<!--                android:textSize="25sp"-->
+<!--                android:layout_marginBottom="20dp"-->
+<!--                android:layout_gravity="left"-->
+<!--                />-->
+
+            <Button
+                android:id="@+id/Dashboard_Faq"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Options"
-                android:textStyle="bold"
-                android:fontFamily="@font/teachers"
-                android:textColor="#CC303349"
-                android:textSize="25sp"
-                android:layout_marginBottom="20dp"
-                android:layout_gravity="left"
-                />
-
-            <Button
-                android:id="@+id/Dashboard_PregeneratedTimetable"
-                android:layout_width="match_parent"
-                android:layout_height="75dp"
-                android:layout_gravity="center"
-                android:layout_marginBottom="10dp"
-                android:backgroundTint="@color/white"
-                android:drawableEnd="@drawable/image_arrow_right"
-                android:fontFamily="@font/teachers"
-                android:gravity="center_vertical"
-                android:text="Pre-generated Timetables"
-                android:textColor="@color/whale_blue"
-                android:textSize="17sp" />
-
-            <Button
-                android:id="@+id/Dashboard_ContactUs"
-                android:layout_width="match_parent"
-                android:layout_height="75dp"
-                android:text="Support/ Contact Us"
+                android:minHeight="75dp"
+                android:text="FAQ's"
                 android:fontFamily="@font/teachers"
                 android:textSize="17sp"
                 android:layout_gravity="center"
@@ -98,6 +85,21 @@
                 android:drawableEnd="@drawable/image_arrow_right"
                 />
 
+            <Button
+                android:id="@+id/Dashboard_ContactUs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="75dp"
+                android:text="Support/ Contact Us"
+                android:fontFamily="@font/teachers"
+                android:textSize="17sp"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:textColor="@color/whale_blue"
+                android:backgroundTint="@color/white"
+                android:layout_marginBottom="10dp"
+                android:drawableEnd="@drawable/image_arrow_right"
+                />
 
         </LinearLayout>
 

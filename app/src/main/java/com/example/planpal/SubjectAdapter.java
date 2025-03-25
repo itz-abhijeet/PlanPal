@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-
 public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectViewHolder> {
     private Context context;
     private List<Subject> subjectList;
@@ -37,12 +36,10 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectV
     public void onBindViewHolder(@NonNull SubjectViewHolder holder, int position) {
         Subject subject = subjectList.get(position);
         holder.subjectName.setText(subject.getName());
-        holder.subjectCode.setText(subject.getCode());
+        holder.subjectCode.setText("Subject Code: " + subject.getCode());
+        holder.subjectCredits.setText("Number Of Slots: " + subject.getCredits());
 
-        holder.removeButton.setOnClickListener(v -> {
-            removeClickListener.onClick(v);
-            // Handle further onClick or dialog
-        });
+        holder.removeButton.setOnClickListener(v -> removeClickListener.onClick(v));
     }
 
     @Override
@@ -50,17 +47,16 @@ public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.SubjectV
         return subjectList.size();
     }
 
-    public class SubjectViewHolder extends RecyclerView.ViewHolder {
-        TextView subjectName;
-        TextView subjectCode;
+    public static class SubjectViewHolder extends RecyclerView.ViewHolder {
+        TextView subjectName, subjectCode, subjectCredits;
         Button removeButton;
 
         public SubjectViewHolder(View view) {
             super(view);
             subjectName = view.findViewById(R.id.subjectName);
             subjectCode = view.findViewById(R.id.subjectCode);
+            subjectCredits = view.findViewById(R.id.subjectCredits); // Add this in your layout
             removeButton = view.findViewById(R.id.removeButton);
         }
     }
 }
-

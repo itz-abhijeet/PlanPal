@@ -13,7 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class TeacherSubject extends AppCompatActivity {
 
-    Button AddTeacherSubject, RemoveTeacherSubject;
+    Button AddTeacherSubject, ViewTeacherSubject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +27,7 @@ public class TeacherSubject extends AppCompatActivity {
         });
 
         AddTeacherSubject = findViewById(R.id.teacherSubject_AddteacherSubject);
-        RemoveTeacherSubject = findViewById(R.id.teacherSubject_RemoveteacherSubject);
+        ViewTeacherSubject = findViewById(R.id.teacherSubject_ViewteacherSubject);
 
         AddTeacherSubject.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,10 +37,10 @@ public class TeacherSubject extends AppCompatActivity {
             }
         });
 
-        RemoveTeacherSubject.setOnClickListener(new View.OnClickListener() {
+        ViewTeacherSubject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(TeacherSubject.this, RemoveTeacherSubject.class);
+                Intent i = new Intent(TeacherSubject.this, ViewTeacherSubject.class);
                 startActivity(i);
             }
         });
