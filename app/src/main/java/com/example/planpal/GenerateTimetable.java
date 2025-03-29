@@ -137,9 +137,6 @@ public class GenerateTimetable extends AppCompatActivity {
         return headerRow;
     }
 
-
-
-
     private Map<String, String> fetchSubjectCodeToName() {
         Map<String, String> subjectMap = new HashMap<>();
         Cursor cursor = dbHelper.viewTable(DatabaseHelper.TABLE_SUBJECT);
@@ -155,6 +152,135 @@ public class GenerateTimetable extends AppCompatActivity {
         return subjectMap;
     }
 
+//    private void generateTimetables() {
+//        clearTimetables();
+//        nameofInstitute.setVisibility(View.VISIBLE);
+//        c1.setVisibility(View.VISIBLE);
+//        c2.setVisibility(View.VISIBLE);
+//        c3.setVisibility(View.VISIBLE);
+//        savePdfButton.setVisibility(View.VISIBLE);
+//
+//        String[] days = {"MON", "TUE", "WED", "THU", "FRI", "SAT"};
+//        TableLayout[] timetables = {timetableTable1, timetableTable2, timetableTable3};
+//
+//        // Fetch subject-teacher assignments (Stores subject codes)
+//        Map<String, List<String>> subjectTeachers = fetchSubjectTeachers();
+//        Log.d("DEBUG", "Fetched Subject-Teacher Assignments: " + subjectTeachers);
+//
+//        if (subjectTeachers.isEmpty()) {
+//            Toast.makeText(this, "No teacher assignments found.", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//        // Fetch subjects with credits (Stores subject names)
+//        Map<String, Integer> subjectCredits = fetchSubjectsWithCredits();
+//        Log.d("DEBUG", "Fetched Subject Credits: " + subjectCredits);
+//
+//        if (subjectCredits.isEmpty()) {
+//            Toast.makeText(this, "Subjects don't exist.", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//        // Fetch subject name → subject code mapping
+//        Map<String, String> subjectCodeMap = fetchSubjectCodeToName();
+//        Log.d("DEBUG", "Subject Code Mapping: " + subjectCodeMap);
+//
+//        // Expand subject list based on credits (Convert subject names to codes)
+//        List<String> expandedSubjects = new ArrayList<>();
+//        for (Map.Entry<String, Integer> entry : subjectCredits.entrySet()) {
+//            String subjectName = entry.getKey();
+//            String subjectCode = subjectCodeMap.get(subjectName);
+//
+//            if (subjectCode != null && subjectTeachers.containsKey(subjectCode)) { // Check if the subject has teachers
+//                for (int i = 0; i < entry.getValue(); i++) {
+//                    expandedSubjects.add(subjectCode);
+//                }
+//            }
+//        }
+//
+//        if (expandedSubjects.isEmpty()) {
+//            Toast.makeText(this, "No valid subjects with assigned teachers.", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//        // Teacher schedule to track availability PER CLASS
+//        Map<String, Map<String, Set<String>>> teacherSchedule = new HashMap<>();
+//
+//        // Global schedule to prevent a teacher from being assigned to multiple classes at the same time
+//        Map<String, Set<String>> globalTeacherSchedule = new HashMap<>();
+//
+//        // Balancing data: Lecture and "No Teacher Assigned" counts per class
+//        Map<String, Integer> classLectureCount = new HashMap<>();
+//        Map<String, Integer> classNoTeacherCount = new HashMap<>();
+//
+//        for (int i = 0; i < timetables.length; i++) {
+//            TableLayout table = timetables[i];
+//            String className = "Class " + (i + 1);
+//            table.addView(createHeaderRow());
+//
+//            for (String day : days) {
+//                TableRow row = new TableRow(this);
+//                row.setLayoutParams(new TableRow.LayoutParams(
+//                        TableRow.LayoutParams.MATCH_PARENT,
+//                        TableRow.LayoutParams.WRAP_CONTENT
+//                ));
+//
+//                TextView dayCell = new TextView(this);
+//                dayCell.setLayoutParams(new TableRow.LayoutParams(
+//                        0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f
+//                ));
+//                dayCell.setPadding(8, 8, 8, 8);
+//                dayCell.setTextSize(16);
+//                dayCell.setText(day);
+//                dayCell.setTextColor(Color.BLACK);
+//                row.addView(dayCell);
+//
+//                List<String> availableSubjects = new ArrayList<>(expandedSubjects);
+//                Collections.shuffle(availableSubjects);
+//
+//                for (int hour = 0; hour < 6; hour++) {
+//                    TextView cell = new TextView(this);
+//                    cell.setLayoutParams(new TableRow.LayoutParams(
+//                            0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f
+//                    ));
+//                    cell.setPadding(8, 8, 8, 8);
+//                    cell.setTextSize(16);
+//
+//                    if (availableSubjects.isEmpty()) {
+//                        availableSubjects = new ArrayList<>(expandedSubjects);
+//                        Collections.shuffle(availableSubjects);
+//                    }
+//
+//                    String subjectCode = availableSubjects.remove(0);
+//                    Log.d("DEBUG", "Assigning teacher for Subject Code: " + subjectCode + " on " + day + " hour " + hour);
+//
+//                    // Assign teacher per class while preventing conflicts across all classes
+//                    String assignedTeacher = assignTeacher(className, subjectCode, subjectTeachers,
+//                            teacherSchedule, globalTeacherSchedule,
+//                            classLectureCount, classNoTeacherCount,
+//                            day, hour);
+//
+//                    if (assignedTeacher == null) {
+//                        String sN = dbHelper.getSubjectNameBySubjectCode(subjectCode);
+//                        cell.setText(sN + "\n" + "No Teacher Avaiable");
+//                        cell.setTextColor(Color.RED);
+//                    } else {
+//                        String sN = dbHelper.getSubjectNameBySubjectCode(subjectCode);
+//                        String tN = dbHelper.getTeacherNameByTeacherMail(assignedTeacher);
+//                        cell.setText(sN + "\n" + tN);
+//                        cell.setTextColor(Color.BLACK);
+//                    }
+//
+//                    row.addView(cell);
+//                }
+//
+//                table.addView(row);
+//            }
+//        }
+//
+//        Log.d("DEBUG", "Class Lecture Counts: " + classLectureCount);
+//        Log.d("DEBUG", "Class No Teacher Counts: " + classNoTeacherCount);
+//    }
 
     private void generateTimetables() {
         clearTimetables();
@@ -169,8 +295,6 @@ public class GenerateTimetable extends AppCompatActivity {
 
         // Fetch subject-teacher assignments (Stores subject codes)
         Map<String, List<String>> subjectTeachers = fetchSubjectTeachers();
-        Log.d("DEBUG", "Fetched Subject-Teacher Assignments: " + subjectTeachers);
-
         if (subjectTeachers.isEmpty()) {
             Toast.makeText(this, "No teacher assignments found.", Toast.LENGTH_SHORT).show();
             return;
@@ -178,8 +302,6 @@ public class GenerateTimetable extends AppCompatActivity {
 
         // Fetch subjects with credits (Stores subject names)
         Map<String, Integer> subjectCredits = fetchSubjectsWithCredits();
-        Log.d("DEBUG", "Fetched Subject Credits: " + subjectCredits);
-
         if (subjectCredits.isEmpty()) {
             Toast.makeText(this, "Subjects don't exist.", Toast.LENGTH_SHORT).show();
             return;
@@ -187,16 +309,30 @@ public class GenerateTimetable extends AppCompatActivity {
 
         // Fetch subject name → subject code mapping
         Map<String, String> subjectCodeMap = fetchSubjectCodeToName();
-        Log.d("DEBUG", "Subject Code Mapping: " + subjectCodeMap);
 
         // Expand subject list based on credits (Convert subject names to codes)
         List<String> expandedSubjects = new ArrayList<>();
+        Map<String, Map<String, Integer>> classSubjectLectureCount = new HashMap<>();
+
         for (Map.Entry<String, Integer> entry : subjectCredits.entrySet()) {
             String subjectName = entry.getKey();
             String subjectCode = subjectCodeMap.get(subjectName);
 
-            if (subjectCode != null && subjectTeachers.containsKey(subjectCode)) { // Check if the subject has teachers
+            if (subjectCode != null && subjectTeachers.containsKey(subjectCode)) {
+                classSubjectLectureCount.putIfAbsent(subjectCode, new HashMap<>());
+
                 for (int i = 0; i < entry.getValue(); i++) {
+                    if (entry.getValue() == 1) {
+                        boolean canAdd = true;
+                        for (String className : new String[]{"Class 1", "Class 2", "Class 3"}) {
+                            int lectureCount = classSubjectLectureCount.get(subjectCode).getOrDefault(className, 0);
+                            if (lectureCount >= 1) {
+                                canAdd = false;
+                                break;
+                            }
+                        }
+                        if (!canAdd) break;
+                    }
                     expandedSubjects.add(subjectCode);
                 }
             }
@@ -216,6 +352,9 @@ public class GenerateTimetable extends AppCompatActivity {
         // Balancing data: Lecture and "No Teacher Assigned" counts per class
         Map<String, Integer> classLectureCount = new HashMap<>();
         Map<String, Integer> classNoTeacherCount = new HashMap<>();
+        // Track how many times a subject has been assigned to each class
+        Map<String, Integer> subjectClassCount = new HashMap<>();
+
 
         for (int i = 0; i < timetables.length; i++) {
             TableLayout table = timetables[i];
@@ -233,6 +372,7 @@ public class GenerateTimetable extends AppCompatActivity {
                 dayCell.setLayoutParams(new TableRow.LayoutParams(
                         0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f
                 ));
+
                 dayCell.setPadding(8, 8, 8, 8);
                 dayCell.setTextSize(16);
                 dayCell.setText(day);
@@ -256,23 +396,28 @@ public class GenerateTimetable extends AppCompatActivity {
                     }
 
                     String subjectCode = availableSubjects.remove(0);
-                    Log.d("DEBUG", "Assigning teacher for Subject Code: " + subjectCode + " on " + day + " hour " + hour);
 
-                    // Assign teacher per class while preventing conflicts across all classes
                     String assignedTeacher = assignTeacher(className, subjectCode, subjectTeachers,
                             teacherSchedule, globalTeacherSchedule,
                             classLectureCount, classNoTeacherCount,
+                            subjectCredits, subjectClassCount,
                             day, hour);
+
 
                     if (assignedTeacher == null) {
                         String sN = dbHelper.getSubjectNameBySubjectCode(subjectCode);
-                        cell.setText(sN + "\n" + "No Teacher Avaiable");
+                        cell.setText(sN + "\n" + "No Teacher Available");
                         cell.setTextColor(Color.RED);
                     } else {
                         String sN = dbHelper.getSubjectNameBySubjectCode(subjectCode);
                         String tN = dbHelper.getTeacherNameByTeacherMail(assignedTeacher);
                         cell.setText(sN + "\n" + tN);
                         cell.setTextColor(Color.BLACK);
+
+                        // Increment the lecture count for this subject in this class
+                        classSubjectLectureCount.putIfAbsent(subjectCode, new HashMap<>());
+                        classSubjectLectureCount.get(subjectCode).put(className,
+                                classSubjectLectureCount.get(subjectCode).getOrDefault(className, 0) + 1);
                     }
 
                     row.addView(cell);
@@ -281,9 +426,99 @@ public class GenerateTimetable extends AppCompatActivity {
                 table.addView(row);
             }
         }
+    }
 
-        Log.d("DEBUG", "Class Lecture Counts: " + classLectureCount);
-        Log.d("DEBUG", "Class No Teacher Counts: " + classNoTeacherCount);
+    private String assignTeacher(String className, String subjectCode,
+                                 Map<String, List<String>> subjectTeachers,
+                                 Map<String, Map<String, Set<String>>> teacherSchedule,
+                                 Map<String, Set<String>> globalTeacherSchedule,
+                                 Map<String, Integer> classLectureCount,
+                                 Map<String, Integer> classNoTeacherCount,
+                                 Map<String, Integer> subjectCredits,
+                                 Map<String, Integer> subjectClassCount,
+                                 String day, int hour) {
+
+        List<String> teachers = subjectTeachers.get(subjectCode);
+        if (teachers == null || teachers.isEmpty()) {
+            Log.d("DEBUG", "No teachers available for Subject: " + subjectCode);
+            classNoTeacherCount.put(className, classNoTeacherCount.getOrDefault(className, 0) + 1);
+            return null;
+        }
+
+        String timeSlot = day + "-" + hour;
+
+        teacherSchedule.putIfAbsent(className, new HashMap<>());
+        teacherSchedule.get(className).putIfAbsent(timeSlot, new HashSet<>());
+        globalTeacherSchedule.putIfAbsent(timeSlot, new HashSet<>());
+
+        // Ensure 1-credit subjects get exactly 1 lecture per class per week
+        int maxLectures = subjectCredits.getOrDefault(subjectCode, 3); // Default to 3 if not found
+        if (maxLectures == 1) {
+            int count = subjectClassCount.getOrDefault(className + "-" + subjectCode, 0);
+            if (count >= 1) {
+                Log.d("DEBUG", "Skipping Subject: " + subjectCode + " in " + className + " as it already has 1 lecture.");
+                return null; // Don't assign more than 1 lecture for 1-credit subjects per class
+            }
+        }
+
+        // Strictly assign teacher first
+        for (String teacher : teachers) {
+            String assignedClass = dbHelper.getAssignedClassForTeacherAndSubject(teacher, subjectCode);
+            boolean isExplicitlyAssigned = className.equals(assignedClass);
+
+            Set<String> assignedTeachersClass = teacherSchedule.get(className).get(timeSlot);
+            Set<String> assignedTeachersGlobal = globalTeacherSchedule.get(timeSlot);
+
+            if (!assignedTeachersClass.contains(teacher) && !assignedTeachersGlobal.contains(teacher)) {
+                if (isExplicitlyAssigned) {
+                    assignedTeachersClass.add(teacher);
+                    assignedTeachersGlobal.add(teacher);
+                    classLectureCount.put(className, classLectureCount.getOrDefault(className, 0) + 1);
+
+                    // Update subject count per class
+                    subjectClassCount.put(className + "-" + subjectCode,
+                            subjectClassCount.getOrDefault(className + "-" + subjectCode, 0) + 1);
+
+                    Log.d("DEBUG", "Strictly Assigned Teacher: " + teacher + " to Subject: " + subjectCode + " in " + className + " at " + timeSlot);
+                    return teacher;
+                }
+            }
+        }
+
+        // Balance assignment
+        String selectedTeacher = null;
+        int minLectureCount = Integer.MAX_VALUE;
+
+        for (String teacher : teachers) {
+            Set<String> assignedTeachersClass = teacherSchedule.get(className).get(timeSlot);
+            Set<String> assignedTeachersGlobal = globalTeacherSchedule.get(timeSlot);
+
+            if (!assignedTeachersClass.contains(teacher) && !assignedTeachersGlobal.contains(teacher)) {
+                int lectureCount = classLectureCount.getOrDefault(className, 0);
+                if (lectureCount < minLectureCount) {
+                    minLectureCount = lectureCount;
+                    selectedTeacher = teacher;
+                }
+            }
+        }
+
+        if (selectedTeacher != null) {
+            teacherSchedule.get(className).get(timeSlot).add(selectedTeacher);
+            globalTeacherSchedule.get(timeSlot).add(selectedTeacher);
+            classLectureCount.put(className, classLectureCount.getOrDefault(className, 0) + 1);
+
+            // Update subject count per class
+            subjectClassCount.put(className + "-" + subjectCode,
+                    subjectClassCount.getOrDefault(className + "-" + subjectCode, 0) + 1);
+
+            Log.d("DEBUG", "Balanced Assigned Teacher: " + selectedTeacher + " to Subject: " + subjectCode + " in " + className + " at " + timeSlot);
+            return selectedTeacher;
+        }
+
+        // No teacher assigned
+        classNoTeacherCount.put(className, classNoTeacherCount.getOrDefault(className, 0) + 1);
+        Log.d("DEBUG", "No teacher assigned for Subject: " + subjectCode + " in Class: " + className + " at " + timeSlot);
+        return null;
     }
 
 
@@ -292,12 +527,16 @@ public class GenerateTimetable extends AppCompatActivity {
 //                                 Map<String, List<String>> subjectTeachers,
 //                                 Map<String, Map<String, Set<String>>> teacherSchedule,
 //                                 Map<String, Set<String>> globalTeacherSchedule,
+//                                 Map<String, Integer> classLectureCount,
+//                                 Map<String, Integer> classNoTeacherCount,
 //                                 String day, int hour) {
 //
 //        // Get the list of teachers available for the subject
 //        List<String> teachers = subjectTeachers.get(subjectCode);
 //        if (teachers == null || teachers.isEmpty()) {
 //            Log.d("DEBUG", "No teachers available for Subject: " + subjectCode);
+//            // Increment the "No Teacher" counter for this class
+//            classNoTeacherCount.put(className, classNoTeacherCount.getOrDefault(className, 0) + 1);
 //            return null; // No teachers are available for this subject
 //        }
 //
@@ -311,122 +550,59 @@ public class GenerateTimetable extends AppCompatActivity {
 //        for (String teacher : teachers) {
 //            // Check if the teacher is assigned to the current class for this subject
 //            String assignedClass = dbHelper.getAssignedClassForTeacherAndSubject(teacher, subjectCode);
-//
 //            boolean isExplicitlyAssigned = className.equals(assignedClass);
 //
-//            // Check if the teacher is free and either explicitly assigned or available as fallback
+//            // Check if the teacher is free for the current slot
 //            Set<String> assignedTeachersClass = teacherSchedule.get(className).get(timeSlot);
 //            Set<String> assignedTeachersGlobal = globalTeacherSchedule.get(timeSlot);
 //
 //            if (!assignedTeachersClass.contains(teacher) && !assignedTeachersGlobal.contains(teacher)) {
 //                if (isExplicitlyAssigned) {
-//                    // Strict assignment logic
+//                    // Strictly assign teacher
 //                    assignedTeachersClass.add(teacher);
 //                    assignedTeachersGlobal.add(teacher);
+//
+//                    // Update lecture count for the class
+//                    classLectureCount.put(className, classLectureCount.getOrDefault(className, 0) + 1);
 //                    Log.d("DEBUG", "Strictly Assigned Teacher: " + teacher + " to Subject: " + subjectCode + " in " + className + " at " + timeSlot);
 //                    return teacher;
 //                }
 //            }
 //        }
 //
-//        // Fallback logic: Allow assignment of any free teacher for the subject
+//        // Fallback logic: Distribute teachers and lectures evenly
+//        String selectedTeacher = null;
+//        int minLectureCount = Integer.MAX_VALUE;
+//
 //        for (String teacher : teachers) {
 //            Set<String> assignedTeachersClass = teacherSchedule.get(className).get(timeSlot);
 //            Set<String> assignedTeachersGlobal = globalTeacherSchedule.get(timeSlot);
 //
 //            if (!assignedTeachersClass.contains(teacher) && !assignedTeachersGlobal.contains(teacher)) {
-//                assignedTeachersClass.add(teacher);
-//                assignedTeachersGlobal.add(teacher);
-//                Log.d("DEBUG", "Fallback Assigned Teacher: " + teacher + " to Subject: " + subjectCode + " in " + className + " at " + timeSlot);
-//                return teacher;
+//                // Check lecture distribution across classes
+//                int lectureCount = classLectureCount.getOrDefault(className, 0);
+//
+//                if (lectureCount < minLectureCount) {
+//                    minLectureCount = lectureCount;
+//                    selectedTeacher = teacher;
+//                }
 //            }
 //        }
 //
+//        if (selectedTeacher != null) {
+//            teacherSchedule.get(className).get(timeSlot).add(selectedTeacher);
+//            globalTeacherSchedule.get(timeSlot).add(selectedTeacher);
+//            classLectureCount.put(className, classLectureCount.getOrDefault(className, 0) + 1);
+//
+//            Log.d("DEBUG", "Balanced Assigned Teacher: " + selectedTeacher + " to Subject: " + subjectCode + " in " + className + " at " + timeSlot);
+//            return selectedTeacher;
+//        }
+//
+//        // If no teacher can be assigned, increment "No Teacher" counter
+//        classNoTeacherCount.put(className, classNoTeacherCount.getOrDefault(className, 0) + 1);
 //        Log.d("DEBUG", "No teacher assigned for Subject: " + subjectCode + " in Class: " + className + " at " + timeSlot);
-//        return null; // No teacher available for this time slot
+//        return null;
 //    }
-
-
-    private String assignTeacher(String className, String subjectCode,
-                                 Map<String, List<String>> subjectTeachers,
-                                 Map<String, Map<String, Set<String>>> teacherSchedule,
-                                 Map<String, Set<String>> globalTeacherSchedule,
-                                 Map<String, Integer> classLectureCount,
-                                 Map<String, Integer> classNoTeacherCount,
-                                 String day, int hour) {
-
-        // Get the list of teachers available for the subject
-        List<String> teachers = subjectTeachers.get(subjectCode);
-        if (teachers == null || teachers.isEmpty()) {
-            Log.d("DEBUG", "No teachers available for Subject: " + subjectCode);
-            // Increment the "No Teacher" counter for this class
-            classNoTeacherCount.put(className, classNoTeacherCount.getOrDefault(className, 0) + 1);
-            return null; // No teachers are available for this subject
-        }
-
-        String timeSlot = day + "-" + hour;
-
-        // Initialize schedules for the class and globally
-        teacherSchedule.putIfAbsent(className, new HashMap<>());
-        teacherSchedule.get(className).putIfAbsent(timeSlot, new HashSet<>());
-        globalTeacherSchedule.putIfAbsent(timeSlot, new HashSet<>());
-
-        for (String teacher : teachers) {
-            // Check if the teacher is assigned to the current class for this subject
-            String assignedClass = dbHelper.getAssignedClassForTeacherAndSubject(teacher, subjectCode);
-            boolean isExplicitlyAssigned = className.equals(assignedClass);
-
-            // Check if the teacher is free for the current slot
-            Set<String> assignedTeachersClass = teacherSchedule.get(className).get(timeSlot);
-            Set<String> assignedTeachersGlobal = globalTeacherSchedule.get(timeSlot);
-
-            if (!assignedTeachersClass.contains(teacher) && !assignedTeachersGlobal.contains(teacher)) {
-                if (isExplicitlyAssigned) {
-                    // Strictly assign teacher
-                    assignedTeachersClass.add(teacher);
-                    assignedTeachersGlobal.add(teacher);
-
-                    // Update lecture count for the class
-                    classLectureCount.put(className, classLectureCount.getOrDefault(className, 0) + 1);
-                    Log.d("DEBUG", "Strictly Assigned Teacher: " + teacher + " to Subject: " + subjectCode + " in " + className + " at " + timeSlot);
-                    return teacher;
-                }
-            }
-        }
-
-        // Fallback logic: Distribute teachers and lectures evenly
-        String selectedTeacher = null;
-        int minLectureCount = Integer.MAX_VALUE;
-
-        for (String teacher : teachers) {
-            Set<String> assignedTeachersClass = teacherSchedule.get(className).get(timeSlot);
-            Set<String> assignedTeachersGlobal = globalTeacherSchedule.get(timeSlot);
-
-            if (!assignedTeachersClass.contains(teacher) && !assignedTeachersGlobal.contains(teacher)) {
-                // Check lecture distribution across classes
-                int lectureCount = classLectureCount.getOrDefault(className, 0);
-
-                if (lectureCount < minLectureCount) {
-                    minLectureCount = lectureCount;
-                    selectedTeacher = teacher;
-                }
-            }
-        }
-
-        if (selectedTeacher != null) {
-            teacherSchedule.get(className).get(timeSlot).add(selectedTeacher);
-            globalTeacherSchedule.get(timeSlot).add(selectedTeacher);
-            classLectureCount.put(className, classLectureCount.getOrDefault(className, 0) + 1);
-
-            Log.d("DEBUG", "Balanced Assigned Teacher: " + selectedTeacher + " to Subject: " + subjectCode + " in " + className + " at " + timeSlot);
-            return selectedTeacher;
-        }
-
-        // If no teacher can be assigned, increment "No Teacher" counter
-        classNoTeacherCount.put(className, classNoTeacherCount.getOrDefault(className, 0) + 1);
-        Log.d("DEBUG", "No teacher assigned for Subject: " + subjectCode + " in Class: " + className + " at " + timeSlot);
-        return null;
-    }
 
 
 
@@ -450,6 +626,7 @@ public class GenerateTimetable extends AppCompatActivity {
         return subjectTeachers;
     }
 
+
     /**
      * Fetch subjects with their credits
      */
@@ -467,6 +644,7 @@ public class GenerateTimetable extends AppCompatActivity {
         Log.d("DEBUG", "Fetched Subject Credits: " + subjects);
         return subjects;
     }
+
 
 
     // ----------------PDF Saving
